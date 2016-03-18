@@ -1,0 +1,460 @@
+BBSHOST	defs.h	62
+BBSIPNUM	defs.h	63
+BBSPORT	defs.h	64
+BLOCK	telnet.h	18
+BSIZE	des.h	216
+CLIENT	telnet.h	17
+CLIENT2	telnet.h	34
+CLIENT_OPTIONS	telnet.h	65
+CMU	vms.h	13
+COLORCAPTURE	defs.h	81
+COLORCHAR	edit.c	14
+CONFIG	telnet.h	32
+CR	defs.h	55
+CTRL_D	defs.h	47
+CTRL_K	defs.h	48
+CTRL_N	defs.h	49
+CTRL_R	defs.h	50
+CTRL_U	defs.h	51
+CTRL_W	defs.h	52
+CTRL_X	defs.h	53
+C_Block	des.h	79
+ColourChar	iosystem.c	/^void ColourChar(key)$/
+ColourChar	utility.c	/^void ColourChar(key)$/
+DEBUGFILE	defs.h	100
+DECRYPT	defs.h	105
+DEL	defs.h	56
+DES_CBC_MODE	des.h	76
+DES_DECRYPT	des.h	74
+DES_ENCRYPT	des.h	73
+DES_KEY_SZ	des.h	70
+DES_PCBC_MODE	des.h	77
+DES_SCHEDULE_SZ	des.h	71
+DES_version	des_enc.c	/^char *DES_version="libdes v 3.21 - 95\/11\/21 - eay";$/
+DO	telnet.h	10
+DOC	defs.h	108
+DONT	telnet.h	9
+D_ENCRYPT	des.h	278
+D_ENCRYPT	des.h	293
+D_ENCRYPT	des.h	307
+EDIT_S	telnet.h	39
+ENCRYPT	defs.h	104
+ERROR	telnet.h	61
+ESCAPE_CODE	getline.c	286
+E_2ENTEREND	defs.h	96
+E_COLORS	defs.h	97
+E_EDIT	defs.h	95
+E_INCLUDE_PROMPT	defs.h	98
+FILE_E	telnet.h	38
+FILE_S	telnet.h	37
+FP	des.h	373
+G_LINES	telnet.h	21
+G_NAME	telnet.h	20
+G_POST	telnet.h	22
+G_STR	telnet.h	19
+G_STRWR	telnet.h	23
+HALF_ITERATIONS	des.h	212
+HANDLER	unix.c	22
+HANDLER	unix.c	24
+HDRSIZE	des.h	246
+HEADER_DES_H	des.h	53
+HEADER_DES_LOCL_H	des.h	160
+HPERM_OP	des_enc.c	294
+IAC	telnet.h	8
+INPUT_LEFT	defs.h	37
+INPUT_LEFT	sysio.h	11
+INPUT_LEFT	sysio.h	15
+INPUT_LEFT	sysio.h	17
+INPUT_LEFT	sysio.h	21
+INPUT_LEFT	sysio.h	23
+IP	des.h	363
+IPTOUL	vms.h	19
+IS	telnet.h	55
+ITEMLIST	vms.h	/^struct  LNM$ITEMLIST$/
+ITERATIONS	des.h	211
+KEY_SZ	des.h	81
+Key_schedule	des.h	80
+LARGE	iosystem.c	122
+LEFT	iosystem.c	120
+LNM	vms.h	78
+LOGGING_IN	defs.h	83
+LOGIN_ASAP	defs.h	82
+MAILVALIDCHARS	getline.c	131
+MAXALIAS	getline.c	32
+MAXENEMIES	defs.h	112
+MAXFRIENDS	defs.h	111
+MAXNAME	getline.c	33
+MAXSYS	defs.h	110
+MAXTRIES	defs.h	102
+MAXWHO	defs.h	113
+MAXWRITE	des.h	215
+MORE_M	telnet.h	29
+MULTINET	vms.h	14
+NET	vms.h	9
+NET_INPUT_LEFT	defs.h	38
+NET_INPUT_LEFT	sysio.h	34
+NET_INPUT_LEFT	sysio.h	39
+NO	defs.h	60
+NO_AUTO_LOGIN	defs.h	84
+NUM_WEAK_KEY	des_enc.c	252
+OFF	telnet.h	63
+OK	telnet.h	62
+ON	telnet.h	64
+P	proto.h	6
+P	proto.h	8
+PERM_OP	des.h	359
+PLUS	iosystem.c	118
+POST_E	telnet.h	28
+POST_K	telnet.h	35
+POST_MARK	telnet.h	66
+POST_S	telnet.h	27
+PROTO	des.h	102
+PROTO	des.h	178
+PROTO	des.h	194
+PROTO	des.h	203
+RAND	des.h	176
+RAND	des.h	186
+RAND	des.h	192
+SB	telnet.h	13
+SE	telnet.h	14
+SEEK_CUR	defs.h	28
+SEEK_END	defs.h	29
+SEEK_SET	defs.h	27
+SEND	telnet.h	56
+SIGN	iosystem.c	117
+SPACE	iosystem.c	119
+SPAWN	vms.h	6
+SPAWN	vms.h	7
+SPECIAL	iosystem.c	121
+START	telnet.h	30
+START2	telnet.h	31
+START3	telnet.h	33
+SWBI	vms.h	18
+S_DOCCLIENT	defs.h	92
+S_INCOMING_DATA	defs.h	88
+S_LOGOUTW_RCV	defs.h	89
+S_LOGOUTW_WILL	defs.h	90
+S_TELNET	defs.h	91
+S_WHO	telnet.h	24
+TAB	defs.h	54
+TELNET	defs.h	107
+TELOPT_BBSPOST	telnet.h	51
+TELOPT_ECHO	telnet.h	44
+TELOPT_ENVIRON	telnet.h	48
+TELOPT_LOGOUT	telnet.h	50
+TELOPT_NAWS	telnet.h	46
+TELOPT_NEW_ENVIRON	telnet.h	49
+TELOPT_SGA	telnet.h	45
+TELOPT_TERMINAL_TYPE	telnet.h	47
+TELOPT_TIMING_MARK	telnet.h	52
+TERM	vms.h	8
+TS_CR	telnet.h	75
+TS_DATA	telnet.h	69
+TS_DO	telnet.h	73
+TS_DONT	telnet.h	74
+TS_GET	telnet.h	77
+TS_IAC	telnet.h	70
+TS_IGNORE_SB	telnet.h	101
+TS_IGNORE_SB_WAS_IAC	telnet.h	102
+TS_SB	telnet.h	76
+TS_SB_CLIENTOPTIONS	telnet.h	98
+TS_SB_CLIENTOPTIONS_POSTMARK	telnet.h	99
+TS_SB_CLIENTOPTIONS_TIMEOUT	telnet.h	100
+TS_VOID	telnet.h	78
+TS_WILL	telnet.h	71
+TS_WONT	telnet.h	72
+Testname	telnet.c	/^    char Testname[41];$/
+UCX	vms.h	15
+UNNUSED	telnet.h	36
+UPDATE	telnet.h	40
+USERVAR	telnet.h	58
+USE_TERMIO	unix.h	18
+US_ANSICOLORS	defs.h	75
+US_ANSIDEFAULT	defs.h	85
+US_NEW_EDIT	defs.h	79
+US_NOBOLDCOLORS	defs.h	77
+US_NOFLASH	defs.h	76
+US_NOWARNING	defs.h	78
+VALIDCHARS	getline.c	129
+VALUE	telnet.h	57
+WHO_E	telnet.h	42
+WHO_S	telnet.h	41
+WILL	telnet.h	12
+WONT	telnet.h	11
+XMSG_E	telnet.h	26
+XMSG_S	telnet.h	25
+YAWC_editor	yawc_edit.c	/^YAWC_editor(result, lines, length, flags, prompt)$/
+YES	defs.h	59
+ZEROPAD	iosystem.c	116
+_	des.h	67
+_IBCS2	unix.h	20
+__svr4__	unix.h	14
+abortlogin	unix.c	/^static int abortlogin = 0;$/
+alloc_line	yawc_edit.c	/^struct buffer_lines *alloc_line (length)$/
+back	utility.c	/^back(spaces)$/
+bit_64	des.h	/^typedef struct des_key_schedule bit_64;$/
+buf	telnet.c	/^    static unsigned char buf[80];	\/* Generic buffer		*\/$/
+buffer_lines	yawc_edit.c	/^struct buffer_lines	\/* basic buffer line struct *\/$/
+bufp	telnet.c	/^    static int bufp = 0;	\/* Pointer into generic buffer	*\/$/
+bye	unix.c	/^bye()$/
+bye	vms.c	/^bye(void)$/
+c2l	des.h	218
+c2ln	des.h	224
+caddr_t	vms.h	12
+car_in	vms.h	/^int car_in;		\/* True if a character is waiting *\/$/
+car_in_func	vms.c	/^car_in_func(void)$/
+cbc_cksum	des.h	87
+char_wait	vms.h	/^int char_wait;		\/* Fake character pushed in input *\/$/
+char_wait_flag	vms.h	/^int char_wait_flag;	\/* True if fake input is present. *\/$/
+check_for_other_sessions	utility.c	/^check_for_other_sessions()$/
+check_parity	des_enc.c	/^static int check_parity(key)$/
+checkex	vms.c	/^checkex(unsigned long status)$/
+checkfile	edit.c	/^checkfile(fp)$/
+child_ast	vms.c	/^child_ast(int openflag)$/
+col	telnet.c	/^    static int col = 0;           \/* Current column (for formatting who list *\/$/
+color	utility.c	/^void color(ch)$/
+colorflag	telnet.c	/^    static int colorflag = 0;	\/* if set, next character will be color()ed *\/$/
+colorize	utility.c	/^void colorize(string)$/
+colour_so_far	getline.c	/^char *colour_so_far (string_so_far, mode)$/
+configbbsrc	config.c	/^configbbsrc()$/
+connect_fp	utility.c	/^connect_fp()$/
+connect_prompt	utility.c	/^connect_prompt()$/
+connectbbs	unix.c	/^connectbbs(how)$/
+connectbbs	vms.c	/^connectbbs(how)$/
+const	des.h	198
+cprintf	iosystem.c	/^cprintf(fmt)$/
+cputs_ins	getline.c	/^static void cputs_ins(string, b, insert, Secret)$/
+ctlchan	vms.h	/^unsigned short ctlchan;	\/* Network IO channel  *\/$/
+ctrl	bbsrc.c	/^ctrl(s)$/
+ctrlx_ast	vms.c	/^ctrlx_ast(void)$/
+current_out	vms.h	/^unsigned char *current_out;	\/* Pointer into output buffer *\/$/
+current_out_net	vms.h	/^unsigned char *current_out_net;	\/* Pointer into output buffer *\/$/
+current_sb	telnet.c	/^    static int current_sb = 0;	\/* which subnegotiation so we have right now? *\/$/
+decolorize	telnet.c	/^void decolorize(buf, how)$/
+deinitialize	unix.c	/^deinitialize()$/
+deinitialize	vms.c	/^deinitialize(void)$/
+des_SPtrans	des.h	/^static unsigned long des_SPtrans[8][64]={ \/* removed 'const' *\/$/
+des_cbc_cksum	des_enc.c	/^unsigned long des_cbc_cksum(input, output, length, schedule, ivec)$/
+des_cblock	des.h	/^typedef unsigned char des_cblock[8];$/
+des_check_key	des_enc.c	/^int des_check_key=0;$/
+des_check_key_parity	des.h	92
+des_ecb_encrypt	des_enc.c	/^void des_ecb_encrypt(input, output, ks, encrypt)$/
+des_encrypt	des_enc.c	/^void des_encrypt(data, ks, encrypt)$/
+des_encrypt2	des_enc.c	/^void des_encrypt2(data, ks, encrypt)$/
+des_fixup_key_parity	des.h	91
+des_is_weak_key	des_enc.c	/^int des_is_weak_key(key)$/
+des_key_sched	des_enc.c	/^int des_key_sched(key, schedule)$/
+des_key_schedule	des.h	/^	} des_key_schedule[16];$/
+des_ks_struct	des.h	/^typedef struct des_ks_struct$/
+des_set_key	des_enc.c	/^int des_set_key(key, schedule)$/
+des_set_odd_parity	des_enc.c	/^void des_set_odd_parity(key)$/
+des_skb	des.h	/^static unsigned long des_skb[8][64]={ \/* removed 'const' *\/$/
+des_string_to_2keys	des_enc.c	/^void des_string_to_2keys(str, key1, key2)$/
+des_string_to_key	des_enc.c	/^void des_string_to_key(str, key)$/
+do_des	des_enc.c	/^char *do_des(pw, s1, enc)$/
+ecb_encrypt	des.h	86
+editusers	config.c	/^editusers(list, total, size, name)$/
+ef	vms.h	/^unsigned long ef;	\/* Event flag set when input arrives       *\/$/
+ef_child	vms.h	/^unsigned long ef_child;	\/* Event flag set when subprocess finishes *\/$/
+ef_netout	vms.c	/^        ef_netout;$/
+ef_write	vms.c	/^static unsigned long ef_write,$/
+enter_awaymessage	utility.c	/^int enter_awaymessage()$/
+escape_seq	telnet.c	/^    char escape_seq[20] = "";$/
+escape_seq_state	telnet.c	/^    int escape_seq_state = 0;$/
+expand_line	yawc_edit.c	/^void expand_line (line)$/
+extern	global.c	5
+fatalexit	utility.c	/^fatalexit(message)$/
+fatalperror	utility.c	/^fatalperror(error)$/
+fflush	vms.c	/^fflush(FILE * f)$/
+fgetc	vms.c	/^fgetc(FILE *f)$/
+fileflag	telnet.c	/^    static int fileflag = 0;	\/* True if file is being received	*\/$/
+findbbsrc	unix.c	/^findbbsrc()$/
+findbbsrc	vms.c	/^findbbsrc()$/
+findhome	unix.c	/^findhome()$/
+findhome	vms.c	/^findhome()$/
+flush_input	unix.c	/^flush_input(invalid)$/
+flush_input	vms.c	/^flush_input(int invalid)$/
+fprintf	vms.c	/^fprintf(FILE * fp, const char *fmt,...)$/
+fputc	vms.c	/^fputc(int c, FILE * f)$/
+friend_search	telnet.c	/^int friend_search(nm)$/
+friends2tab	utility.c	/^friends2tab()$/
+get_arg	main.c	/^get_arg(arg, next_arg, ac)$/
+get_len	yawc_edit.c	/^int get_len (curr)$/
+get_name	getline.c	/^char   *get_name(quit_priv)$/
+get_old_pw	utility.c	/^int get_old_pw(prompt, pw_enc, pw_clear, how, first)$/
+get_realpos	yawc_edit.c	/^int get_realpos(curr, p_x)$/
+get_some_lines	getline.c	/^get_some_lines(which)$/
+get_string	getline.c	/^get_string(length, result, line, otherflag)$/
+getch_ast	vms.c	/^getch_ast(void)$/
+getchar	sysio.h	43
+getkey	inkey.c	/^getkey()$/
+getpid	des.h	190
+getwindowsize	unix.c	/^getwindowsize()$/
+getwindowsize	vms.c	/^getwindowsize()$/
+handle_ESC	telnet.c	/^void handle_ESC(c)$/
+handle_GET	telnet.c	/^int handle_GET(c)$/
+handle_IAC	telnet.c	/^void handle_IAC(c)$/
+handle_lines	telnet.c	/^void handle_lines(c)$/
+i	telnet.c	/^    int i;$/
+in_ch	vms.h	/^int in_ch;		\/* Last character read from terminal *\/$/
+init_globals	main.c	/^init_globals()$/
+init_setterm	vms.c	/^static int init_setterm = 1;$/
+initialize	unix.c	/^initialize(version)$/
+initialize	vms.c	/^initialize(char *version)$/
+inkey	inkey.c	/^inkey()$/
+iosb_getc	vms.h	/^        iosb_getc;		\/* IO status blocks *\/$/
+iosb_rcv	vms.h	/^        iosb_rcv,$/
+iosb_send	vms.h	/^NetSB_Fields iosb_send,$/
+is_digit	iosystem.c	104
+junk	telnet.c	/^    char    junk[160];$/
+key_chan	vms.h	/^unsigned short key_chan;	\/* Terminal IO channel *\/$/
+key_sched	des.h	85
+l2c	des.h	239
+l2cn	des.h	259
+l2n	des.h	253
+lastcr	inkey.c	/^static int lastcr = 0;$/
+line_back	yawc_edit.c	/^struct buffer_lines *line_back (curr)$/
+line_forw	yawc_edit.c	/^struct buffer_lines *line_forw (curr, length)$/
+looper	utility.c	/^looper()$/
+main	main.c	/^main(argc,argv,envp)$/
+makemessage	edit.c	/^makemessage(upload)$/
+more	utility.c	/^more(line, pct)$/
+moreflag	telnet.c	/^    static int moreflag = 0;	\/* True while we are inside a MORE prompt *\/$/
+my_crypt	utility.c	/^char * my_crypt (pw_clear)$/
+mybzero	utility.c	/^mybzero(str, n)$/
+myexit	utility.c	/^myexit()$/
+myputchar	vms.c	/^myputchar(char c)$/
+mysleep	unix.c	/^mysleep(sec)$/
+mysleep	vms.c	/^mysleep(sec)$/
+mystrchr	utility.c	/^mystrchr(str, ch)$/
+mystrrchr	utility.c	/^mystrrchr(str, ch)$/
+mystrstr	utility.c	/^mystrstr(str, substr)$/
+n2l	des.h	248
+naws	unix.c	/^naws()$/
+net_ast	vms.c	/^net_ast(void)$/
+net_cara	vms.h	/^int net_cara;		\/* Input character from network   *\/$/
+net_in	vms.h	/^int net_in;		\/* True if network input is available *\/$/
+net_in_func	vms.c	/^net_in_func(void)$/
+net_rcv	vms.c	/^net_rcv(void)$/
+net_request	vms.h	/^int net_request;$/
+net_send	vms.c	/^net_send(unsigned char c)$/
+net_send_ast	vms.c	/^net_send_ast(void)$/
+netbusy	vms.h	/^int netbusy;		\/* True if an output QIO is pending *\/$/
+netflush	defs.h	41
+netflush	sysio.h	37
+netflush	vms.c	/^netflush(void)$/
+netget	defs.h	39
+netget	sysio.h	35
+netget	sysio.h	40
+netofp	vms.h	/^FILE *netofp;		\/* Dummy declaration for compatibility *\/$/
+netput	defs.h	40
+netput	sysio.h	36
+netput	sysio.h	41
+new_color	utility.c	/^void new_color(s)$/
+new_getline	getline.c	/^int new_getline(prompt, string, lim, nocol, line, LastLine, chatmode)$/
+new_getpost	edit.c	/^void new_getpost(khflag, fp, tmpstr)$/
+new_password	utility.c	/^int new_password(new_pwd, prompt, minlen)$/
+newkey	config.c	/^newkey(oldkey)$/
+newmacro	config.c	/^newmacro(which)$/
+number	iosystem.c	/^static void number(num, base, size, precision, type)$/
+numposts	telnet.c	/^    static int numposts = 0;	\/* Count of # of posts we've received so far *\/$/
+odd_parity	des.h	/^static unsigned char odd_parity[256]={ \/* removed 'const' *\/$/
+old_getpost	edit.c	/^void old_getpost(khflag, fp, tmpstr)$/
+openbbsrc	bbsrc.c	/^openbbsrc()$/
+opentmpfile	unix.c	/^opentmpfile()$/
+opentmpfile	vms.c	/^opentmpfile()$/
+outbuf	vms.h	/^unsigned char outbuf[TERM$BUFSIZ];	\/* Terminal output buffer. *\/$/
+outbuf_net	vms.h	/^unsigned char outbuf_net[NET$BUFSIZ];	\/* Terminal output buffer. *\/$/
+parsearg	main.c	/^parsearg (argv, argc)$/
+postbuf	telnet.c	/^    static char postbuf[160];	\/* Buffer for post header (for kill files) *\/$/
+postbufp	telnet.c	/^    static int postbufp = 0;	\/* Pointer for post header buffer	*\/$/
+postflag	telnet.c	/^    static int postflag = 0;	\/* True if post header being received	*\/$/
+postnow	telnet.c	/^    static int postnow = 0;	\/* True while we are receiving a post *\/$/
+postwas	telnet.c	/^    static int postwas = 0;	\/* True for a line after a post received *\/$/
+print_config	main.c	/^print_config(int which)$/
+print_help	main.c	/^void print_help(name)$/
+print_line	yawc_edit.c	/^void print_line (line, mode)$/
+printf	vms.c	/^printf(const char *fmt,...)$/
+process_DOC_wholist	telnet.c	/^void process_DOC_wholist(c)$/
+process_YAWC_wholist	telnet.c	/^void process_YAWC_wholist(c)$/
+prompt	edit.c	/^prompt(fp, old, cmd)$/
+putch_ast	vms.c	/^putch_ast(void)$/
+putchar	sysio.h	44
+pw	unix.c	/^static struct passwd *pw;$/
+random	des.h	208
+read_pw_string	des.h	83
+readbbsrc	bbsrc.c	/^readbbsrc(argv,argc)$/
+real_connect	unix.c	/^int real_connect(netFd, sad, szsa, how)$/
+reapchild	unix.c	/^reapchild()$/
+reprint_colours	yawc_edit.c	/^void reprint_colours(anchor, curr, p_x, flags, pc)$/
+reprint_whole_line	yawc_edit.c	/^void reprint_whole_line(prompt, curr, anchor, top_visual, bottom_visual, p_y, flags, mode, pc)$/
+request	vms.h	/^int request;		\/* True if we have received a flush request$/
+resetterm	unix.c	/^resetterm()$/
+resetterm	vms.c	/^resetterm(void)$/
+run	unix.c	/^run(cmd, arg)$/
+run	vms.c	/^run(char *comm, char *argu)$/
+save_bbsrc	bbsrc.c	/^void save_bbsrc()$/
+savedterm	unix.c	/^static int savedterm = 0;$/
+saveinfo	telnet.c	/^    unsigned char saveinfo[60][60]; \/* added saved info array *\/$/
+savelocalmode	unix.c	/^static int savelocalmode;$/
+saveltchars	unix.c	/^static struct ltchars saveltchars;$/
+savetchars	unix.c	/^static struct tchars savetchars;$/
+saveterm	unix.c	/^static struct sgttyb saveterm;$/
+saveterm	unix.c	/^static struct termio saveterm;$/
+saveterm	vms.c	/^static unsigned char saveterm[12];$/
+savewhop	telnet.c	/^    int savewhop;              \/* pointer to end of saved who list *\/$/
+sendblock	telnet.c	/^sendblock()$/
+sendnaws	telnet.c	/^sendnaws()$/
+set_key	des.h	84
+set_realpos	yawc_edit.c	/^int set_realpos(curr, p)$/
+setterm	unix.c	/^setterm()$/
+setterm	vms.c	/^setterm(void)$/
+shifts2	des_enc.c	/^static int shifts2[16]={0,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0};$/
+sig_return_t	defs.h	11
+sig_return_t	defs.h	9
+siginit	unix.c	/^siginit()$/
+siginit	vms.c	/^siginit()$/
+sigint_handler	unix.c	/^sigint_handler()$/
+sigoff	unix.c	/^sigoff()$/
+sigoff	vms.c	/^sigoff()$/
+sigpause	vms.c	/^sigpause(int i)$/
+skip_atoi	iosystem.c	/^static int skip_atoi(s)$/
+sleeping	inkey.c	/^void sleeping(i)$/
+sp	telnet.c	/^    char   *sp;$/
+srandom	des.h	207
+state	telnet.c	/^    static int state = TS_DATA;	\/* Current state of telnet state machine *\/$/
+strctrl	config.c	/^strctrl(c)$/
+string_to_key	des.h	82
+strrkhr	yawc_edit.c	/^strrkhr(s, c)$/
+strucmp	utility.c	/^strucmp (st1,st2)$/
+suspend	unix.c	/^suspend()$/
+suspend	vms.c	/^suspend(void)$/
+tbusy	vms.h	/^int tbusy;		\/* True if an output QIO is pending *\/$/
+telinit	telnet.c	/^telinit()$/
+telrcv	telnet.c	/^telrcv(c)$/
+temp	telnet.c	/^    char * temp;$/
+tempfileerror	utility.c	/^tempfileerror()$/
+term_sig	unix.c	/^term_sig(how)$/
+term_sig	vms.c	/^term_sig(how)$/
+trim_line	yawc_edit.c	/^void trim_line (st)$/
+truncbbsrc	unix.c	/^truncbbsrc(len)$/
+truncbbsrc	vms.c	/^truncbbsrc(int len)$/
+u_long	vms.h	10
+u_short	vms.h	11
+uname	vms.c	/^static char uname[30];$/
+updateflag	telnet.c	/^    static int updateflag = 0;	\/* True if update-chars are received.	*\/$/
+vcprintf	iosystem.c	/^int vcprintf(fmt, args)$/
+waitnextevent	unix.c	/^waitnextevent()$/
+waitnextevent	vms.c	/^waitnextevent()$/
+weak_keys	des_enc.c	/^static des_cblock weak_keys[NUM_WEAK_KEY]={$/
+who	telnet.c	/^    static unsigned char who[21];   \/* Buffer for current name in who list *\/$/
+wholistbuf	telnet.c	/^    static char wholistbuf[140];\/* Buffer for one wholist-line	*\/$/
+wholistflag	telnet.c	/^    static int wholistflag = 0;	\/* True if wholist is being received.	*\/$/
+whop	telnet.c	/^    static int whop = 0;            \/* Pointer into who array *\/$/
+work	telnet.c	/^    char    work[80];$/
+xmsgbuf	telnet.c	/^    static char xmsgbuf[160];	\/* Buffer for X message header		*\/$/
+xmsgbufp	telnet.c	/^    static int xmsgbufp = 0;	\/* Pointer for X message header buffer	*\/$/
+xmsgflag	telnet.c	/^    static int xmsgflag = 0;	\/* True if X message header being received *\/$/
+xmsgnow	telnet.c	/^    static int xmsgnow = 0;	\/* True while we are receiving an X message *\/$/
+yesno	utility.c	/^yesno()$/
+yesnodefault	utility.c	/^yesnodefault()$/

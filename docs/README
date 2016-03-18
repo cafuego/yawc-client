@@ -1,0 +1,104 @@
+   ######################################################################
+   #######                                                        #######
+   #######    See README.[version] file for recent information!   #######
+   #######                                                        #######
+   ######################################################################
+
+This is the YAWC-BBS-CLient, originally the ISCA BBS Client.  All of the terms
+stated by Serendipity are still valid, but Serendipity and the ISCA BBS have
+nothing to do with this CLient-code anymore.  
+
+Multi-sessions have been made: <CtrlB> <0-9> switches between the different
+sessions, as defined in <C>onfig <C>lient <L>ocal <B>BS-hosts.
+
+It does not support "multi-sessions" for VAX/VMS just yet.
+
+Here follows the original README...
+
+	-KHaglund
+--------------------------------------------------
+
+DWD says:
+
+Wait a sec, I'll stick my bit of the README file in as well.
+
+This CLient contains code, made GPL by the inclusion within this CLient,
+from Thanatos BBS (a26.cc.umist.ac.uk).
+
+It supports certain backwards compatible extensions. Currently, these are
+only on Thanatos, AFAIK, but I'm sure (Sysops: HINT) that they'll be
+supported elsewhere.
+
+Notably, these include: ^An...^AN name marking, for use with X's (and
+wholist) only. I don't think anyone'll support this in the wholist, but the
+code manages it just in case... It'll handle the older ^D marking for
+wholists, and the newer, crapper, \r marking, too...
+
+Cursor support. If you've a flair for cursor support, you'd be welcome to
+improve it... It works line-by-line ONLY. Up arrow moves to the beginning of
+the line, Down to the end.
+
+Killfiles should work with X's. I think. Not tested, though. There's not a
+lot of point. Tab expansion works as usual, with the addition that if the
+CLient can find the name of the sender of an X, it'll add that into it's TAB
+list. Note that this requires the mammoth addition of ^An immediately before
+the name, and ^AN after the name, by your Sysops. Nothing you can do except
+complain and badger the Wizards of you favourite BBS to do it for you.
+
+Of course, Thanatos does this anyway.
+
+Also, there's provision, which Thanatos doesn't use, but may do later, to
+use a special Mail recipient mode of getting usernames. This is backwards
+compatible with the normal CLients, and is already used internally by
+Thanatos on the telnet mode. It allows you to put in email addresses, since
+Thanatos supports email.
+
+Colours work, of course, as added in by MathFox, and then completely changed
+by DWD. *grins* The switch is still there, of couse, to switch between BBS's
+at startup by using -s #.
+
+That's all, folks. Have fun, and report any bugs you find in this version
+either on Thanatos or Monolith's CLient rooms.
+
+DWD
+
+--------------------------------------------------
+
+Flint says:
+
+hehe - here's my paragraph. ;)
+
+Just wanted to say that this file is already pretty long, so see 
+README.v[version] for more info.
+
+--------------------------------------------------
+
+Here it is, the long-awaited ISCA BBS client!   Here's what you need to know:
+
+1)  I (the author of this client, Serendipity on the ISCA BBS) will not support
+    this client in any way, shape or form, and will not respond to requests
+    from people wanting help in compiling, porting, hacking, modifying, fixing,
+    using, etc. this client.  I do not have that kind of time.  As it is it
+    provides a lot of useful functionality and works on a fairly large number
+    of machines, if it does not do what you want or does not run on the kind of
+    machines you have access to, I'm sorry, but I can't help you.
+
+2)  This client is useless without a machine running VMS or Unix connected to
+    the Internet.  If you are running Unix on your PC at home you'll need SLIP,
+    PPP, or some other form of software that will put your machine on the
+    Internet.  The exception to this is if you are running the program 'term'.
+    See the INSTALL.term file for more.
+
+3)  This software is distributed under the terms of the GNU Software License.
+    Copies of that license are available at the FSF's main FTP site,
+    prep.ai.mit.edu.
+
+4)  For instructions on how to compile and install this software, see the file
+    called INSTALL.unix for Unix systems, INSTALL.vms for VMS systems, or
+    INSTALL.term for term.
+
+5)  Once you have the client compiled and installed, read the helpfile called
+    Client on the BBS, which gives information on the various helpfiles
+    available detailing how to use all the client features.  You can, however,
+    just run the client in place of telnet and have everything work exactly the
+    same way it used using telnet.

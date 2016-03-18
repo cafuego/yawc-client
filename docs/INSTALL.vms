@@ -1,0 +1,32 @@
+VMS installation:
+
+1. Compile the package.
+     -For a vanilla VMS VAX system with the VAXC compiler:
+        $@make
+     -For a VMS VAX system with the GCC compiler:
+        $@make gcc
+     -For a VMS AXP system, do:
+        $@make alpha
+
+        You will get warnings from LINK about multiply defined symbols.  These
+        are normal.
+
+2. Run the client from the directory where you installed it.  
+
+        $r bbs
+
+3. If you wish to define a symbol to run the client, add a line like this 
+        in your login.com (use the directory where you installed it):
+
+        $yawc :== "$disk:[myname.client]yawc"
+
+        Then to run it you can just say "yawc" from anywhere.
+
+
+
+This version is known or thought to run on Multinet, Woolongong, UCX and CMU
+flavors of VMS VAX TCP/IP.  It has also been compiled successfully on an AXP 
+VMS system with UCX.  If changes are required to make the client compile/run
+correctly for you, please contact Marc Dionne (Marco Polo on the ISCA BBS) and
+let him know as much as possible about your local setup and what changes were
+required for you.

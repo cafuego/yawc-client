@@ -1,0 +1,923 @@
+	 Flint's description of the DOC and YAWC BBS client protocol
+	=============================================================
+
+Contents:
+
+0.   Introduction
+
+1.   The different types of clients
+1.1. The DOC client
+1.2. The YAWC CLient
+
+2.   Connecting
+2.1. DOC
+2.2. YAWC
+2.3. Syncronization (YAWC and DOC)
+
+3.   Local modes (YAWC and DOC)
+3.1. Basics
+3.2. Getting names
+3.3. Getting lines
+3.4. Getting posts
+3.5. Getting X messages and profiles
+3.6. Client configuration
+3.7. File editing (YAWC only)
+
+4.   Online userlist handling
+4.1. Basics
+4.2. DOC
+4.3. YAWC
+
+5.   Other BBS-client communication (YAWC and DOC)
+5.1. eXpress message marking
+5.2. Post marking
+5.3. -More- prompt marking
+5.4. Idle / cutoff detection
+5.5. Color config update (YAWC only)
+5.6. DOC and YAWC colors
+5.7. Terminal size change
+5.8. YAWC name marking
+
+6.   Disconnecting (YAWC and DOC)
+
+7.   YAWC protocol extentions
+7.1. Basics
+7.2. Implemented extentions
+
+------------------------------------------------------------------------------
+
+Chapter 0: introduction
+------------------------
+Since nobody bothered to make a protocol description for DOC (ISCA) and YAWC
+type BBS clients here's mine. It's re-engineered from the code so I can't
+guarantee any correctness but promise to try to do this as accurate as
+possible.
+
+I'll start with a short introduction about the several clients, their
+backgrounds and their basic differences as far as the protocol is concerned.
+After that I'll describe what happens when a client tries to connect, when
+it is connected and when the connection is being closed.
+The last part will describe some extensions to the YAWC protocol and show 
+how new features can be implemented without breaking older clients.
+
+                - Sven Winnecke aka. Flint, Chemnitz, Germany, october 1997
+
+------------------------------------------------------------------------------
+
+Chapter 1: The different types of clients
+------------------------------------------
+1.1. The DOC client
+--------------------
+Apparently in 1993 Serendipity from ISCA BBS release the first client program
+for a DOC style BBS. It was then developed until 1994 where it reached version
+number 1.5 which nowadays is usually referred to "stock ISCA client".
+Several other clients derived from it, for example IO ERROR's, TOM's
+and others for Unix type systems, Roady&Dox's for MS Windows and others for
+other systems as well.
+
+DOC style BBSs that support special clients usually catch them at port 23 which
+is also used for normal telnet connections. Once the connecting program is 
+recognized as BBS client instead of a plain telnet client the BBS goes into
+a special client mode which among other things will send certain control
+sequencies to the client so it could act upon them in a semi-intelligent way.
+
+Another type of BBSs that has been designed to be as compatible as possible 
+to the DOC look and feel is the ABC code. It also supports DOC compatible
+clients but listens for them on port 4123. this allows to run the BBS on a
+host where the standard telnet daemon cannot be changed to an own daemon
+which would log the user straight into the BBS and also recognizes BBS clients.
+Apart from that all that will be said about DOC clients applies to ABC as well.
+
+1.2. The YAWC CLient
+---------------------
+
+In 1994 (or 1995?) Kenneth Haglund aka. KHaglund, author of the YAWC code, 
+took Serendipity's client and made some changes on it to fit it to the needs
+of a YAWC BBS. It lost some functionality (like friend and enemy lists) and got
+some new ones (like multi session capability).
+After him Peter Roozemaal aka. MathFox from Monolith BBS took over, he removed
+some bugs, added improved color support and generally made the code run 
+smoother a bit. After him Dave Cridland (Diamond White) made some improvements
+including cursor support for the line input routine and finally after him I
+made the most recent changes including making it compatible to DOC and ABC
+again (without loosing YAWC CLient capabilities of course ;). MyLittlePonyTail
+wrote a client for MS Windows. Some other people like Flex Able and the 
+programmers at SonCrest did some client coding as well.
+For some odd reasons the YAWC BBS client is often referred to as CLient and
+the CLient derived from MathFox/Diamond White/myself was called CLientPro as
+of version 1.3.
+
+CLients usually connect to port 1976 instead of 23. this makes it easier to
+install the BBS with only a minimum of root admin involvement. At the moemnt
+KHaglund is working on using port 23 for CLients again so the latest code might
+require that again finally.
+
+------------------------------------------------------------------------------
+
+Chapter 2: Connecting
+----------------------
+2.1. DOC
+---------
+As mentioned earlier the DOC client connects to the standard telnet port, 23
+usually. this means that it'll need to recognize telnet negotiation stuff as
+described in the basic telnet RFC. Mainly this byte will be sequences like
+IAC WILL|WONT|DO|DONT option
+where IAC is 0xff(255), WILL,WONT,DO and DONT are 0xfe to 0xfb (254-251) and
+option is a telnet option, also as described in several RFCs. For other values
+see the end of this chapter below.
+
+The client _should_ respond to these negotiation with a corresponding answer
+(it should answer a IAC DO option with a IAC WONT option and to a 
+IAC WILL option with a IAC DONT option), but most DOC clients just ignore 
+the negotiation sequences completely. ISCA seems to work okay with that but
+normal telnet daemons won't. The CLientPro will do the responses, as do
+other DOC clients that also support telnet mode.
+
+Before this all starts the client sends some bytes on it's own. The sequence
+looks as follows: 
+IAC, CLIENT2, IAC, SB, TELOPT_ENVIRON, 0, 1, "USER", 0, <user>, IAC, SE
+This will identify the program as client compatible to v1.5 and pass the user
+name as stored in the environment variable USER to the BBS.
+
+After that the terminal size should be send in the NAWS format:
+IAC, SB, TELOPT_NAWS, 0, 0, 0, rows, IAC, SE.
+
+If that is sent the client will process the telnet IACs as described above.
+
+Finally the BBS will send a IAC START which the client has to answer with a 
+IAC START3 to identify itself as DOC client compatible to version 1.5 earlier 
+clients would send IAC START or IAC START2 but those will be rejected by the 
+BBS for being too old. All those values are also to be found in the telnet.h 
+file of any client source.
+
+After the client received a IAC START it also sets it's synchronization byte
+to 0. This and it's function will be explained in chapter 2.3.
+
+After that the BBS will send the login screen and then the login prompt. It
+will then send IAC codes to get username and password, this will be described
+in chapter 3.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+<connection to port 23 of the BBS>
+
+client> IAC, CLIENT2
+
+client> IAC, SB, TELOPT_ENVIRON, 0, 1, "USER", 0, <user>, IAC, SE
+
+client> IAC, SB, TELOPT_NAWS, 0, 0, 0, rows, IAC, SE
+
+  a series of these negotiation sequences:
+/
+| BBS>    IAC DO option
+| client> IAC WONT option -or- <nothing> -or- IAC WILL option (if implemented)
+| 
+| -and/or-
+|
+| BBS>	IAC WILL option
+| client> IAC DONT option -or- <nothing> -or- IAC DO option (if implemented)
+| ...
+\
+  end of negotiation.
+
+BBS>	IAC START
+client> IAC START3
+BBS> login screen, login prompt.
+-------------------------------------------------------------------------------
+IAC=255, DONT=254, DO=253, WONT=252, WILL=251, SB=250, SE=249, START=172, 
+START3=175, CLIENT2=176, SB=250, SE=249, TELOPT_ENVIRON=36, TELOPT_NAWS=31.
+-------------------------------------------------------------------------------
+
+2.2. YAWC
+----------
+YAWC's CLient connections usually go to port 1976. Usually there's no telnet
+daemon sitting at that port so the CLient wouldn't need to worry about telnet
+IAC sequences. But since it's derived from the ISCA client it usually still
+has the code in it that ignores those codes. Some clients however are well
+capable to deal with them properly.
+
+Right after connecting the BBS expects a IAC CLIENT to be sent by the CLient.
+After that a NAWS sequence like this:
+IAC, SB, TELOPT_NAWS, 0, 0, 0, rows, IAC, SE
+should be sent to the BBS. Older YAWCs won't require that (but accept it
+silently), but younger YAWC BBS versions will hang until you hit a key if
+they don't get that sequence.
+
+That's it. Now also the YAWC BBS will send IAC START to do the synchronizazion
+stuff and the login screen and then will ask the user for username and 
+password.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+<connection to port 1976 of the BBS>
+
+CLient> IAC CLIENT
+
+CLient> IAC, SB, TELOPT_NAWS, 0, 0, 0, rows, IAC, SE
+
+BBS>    IAC START
+
+BBS>    login screen, login prompt.
+-------------------------------------------------------------------------------
+IAC=255, SB=250, SE=249, START=172, SB=250, SE=249, TELOPT_NAWS=31.
+-------------------------------------------------------------------------------
+
+2.3. Synchronization
+---------------------
+To avoid problems that can be caused by net lag and bad modem lines a simple 
+but efficient synchronization method has been implemented into the BBS client;
+it works the same way for both DOC and YAWC clients.
+
+Both the BBS and the client have a sync variable which holds the current idea
+of the BBS and the client about how many bytes have been sent by the client to
+the BBS. it's an 4 byte although only the lower 3 of them are used. 3 bytes
+provide a number > 16 million, so someone would need to transfer more than
+16 MB of data to the BBS in one session which should be highly unlikely.
+
+(on the other hand if someone would manage to do so then he'll be in trouble
+anyway because the sync bytes can't be syncronized anymore. and he'll probably
+also have a lot of BBS admins running and shouting after him too ;)
+
+At some time during the login procedure the BBS will send a IAC START 
+sequence. This causes the client to set it's sync value to 0. The BBS does the
+same right after sending that sequence.
+Now with each byte the client sends and the BBS receives both ends increment
+their couters _EXCEPT_ the data sent are IAC sequencies. They are just sent
+but not counted.
+
+The check if both synchronization bytes (BBS and client) are still identical is
+done every time the BBS sends an input request that will cause the client to
+enter a local mode. The next chapter does a further description about that.
+
+To be able to correct some possible sync problems the BBS holds a buffer of
+a certain amount of the most recent data bytes that have been sent. most
+clients use 1 kB (1024 bytes) for that.
+
+After the request for the client to go into such a local input mode the BBS
+sends it's idea of the current sync value which the client then compares with
+it's own value. Depending of the result the client does the following:
+
+  - if both values are identical - fine, no further action. 
+  - if the BBS's value is too low the missing (client_sync-BBS_sync) bytes
+    are re-sent to the BBS if the difference is lower than the size of the 
+    sync buffer. (some clients will show a warning about that, other just
+    resent the data silently). Some clients however will just set the BBS's
+    sync value to their own counterpart and not re-send the data.
+    A warning will be printed if the amount of missing bytes is larger than
+    the buffer size.
+  - If the BBS's value is bigger than the client's (hence the BBS thinks more
+    bytes have been sent than the client thinks it has sent) then something has
+    gone pretty wrong. The only thing the client can do is printing a warning
+    about it and re-sync itselt with the BBS's value.
+
+The sync value the BBS sends is formatted low-high so the the actual value is
+byte1 + 256*byte2 + 65536*byte3. (bytes 1-3 are ordered as received).
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC START
+BBS     (sets it's sync value to 0)
+
+client> IAC START3	(DOC only!)
+client  (sets sync value to 0 as well)
+
+BBS     (increases the sync byte upon each received byte except IAC sequencies)
+clients (increases the sync byte upon each sent byte except IAC sequencies)
+...
+
+example for a sync value sent by the BBS (see also next chapter):
+BBS>     IAC G_NAME 1 <sync_low> <sync_med> <sync_high>
+client   (calculates the sync value as described above and resends data if
+         necessary or just overwrites it's own sync value with it)
+-------------------------------------------------------------------------------
+IAC=255, START=172, G_NAME=163.
+-------------------------------------------------------------------------------
+
+Chapter 3: Local modes (YAWC and DOC)
+--------------------------------------
+3.1. Basics
+------------
+
+Both DOC and YAWC have the same basic mechanism to let the clients know when
+to do something locally. they differ in some details though.
+
+One of the big advantagdes of having a BBS client instead of plain telnet is
+the client's ability to do some stuff on it's side without bothering the BBS.
+This cuts network load, lag and BBS machine load as well.
+
+In order to do so the BBS needs to tell the client when to go into such a local
+input mode and what to do and how to do it. This is done by using IAC 
+sequencies again. These sequencies look like this:
+
+IAC <what_to_do> <option> <sync_low> <sync_med> <sync_high>
+
+After sending these bytes the BBS goes into a waiting position ignoring every
+data from the client until the client sends a IAC BLOCK to tell the BBS that
+it is now ready to transmit the results of the input. This technique solves 
+some problems that arise from net lag and any data that might be on it's way 
+back to the BBS while the BBS already sent the client into local mode.
+
+The client should NOT send IAC BLOCK if it should do client configutation 
+(G_CONFIG).
+
+After sending IAC BLOCK and the data that has been read from the user the
+client needs to let the BBS know that it's done with sending for now. the way 
+the client lets the BBS know this depends on which routine has been called,
+see the subsequent chapters.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC <command> <option> <sync_low> <sync_med> <sync_high>
+BBS     (now ignores all incoming data that are not IAC BLOCK
+
+client  (now gives the user prompts and all)
+client> IAC BLOCK (not if G_CONFIG)
+
+client> <user input data>...
+client> (sends data to let the BBS know that this is the end of the input
+         data; read ahead for details.
+-------------------------------------------------------------------------------
+IAC=255, BLOCK=161.
+-------------------------------------------------------------------------------
+
+3.2. Getting names
+-------------------
+
+To read a user name the BBS sends this sequence:
+IAC G_NAME <quit_priv>  <sync_low> <sync_med> <sync_high>
+
+quit_priv can have the following values:
+  - 1: user can use <Ctrl-D> to quit (used at login time)
+  - 2: get username (max. 20 characters, alow numbers as well)
+  - 3: get room name (up to 40 characters)
+  - 4: same as 2, originally used to indicate TAB support
+  - 5: get user name (80 characters, allow "@". ".","_" and "-" too for email 
+       address and remote BBS system, also allow numbers to profile by them)
+  - 6: same as 2, but allow support of comma for Multiple-X/Multiple-Mail system
+       (comma end the name to detect we end input with comma)
+
+Only 1 to 3 are defined in the DOC protocol, and only newer YAWCs will use
+the last two, it's a rather quick and dirty hack that had been implemented 
+before the feature negotiation (see last chapter) had been developed. YAWC 
+clients should use quit_priv = 2 if they receive a quit_priv > 3 and don't 
+know what to do with it.
+
+It returns the name and appends a newline (0x0a) character to mark the end of 
+the name.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC G_NAME <option> <sync_low> <sync_med> <sync_high>
+BBS     (waits for IAC BLOCK afterwards)
+
+client> IAC BLOCK
+client> <entered name, first letters capitalized>
+client> \n
+-------------------------------------------------------------------------------
+IAC=255, G_NAME=163, BLOCK=161, \n=10.
+-------------------------------------------------------------------------------
+
+
+3.3. Getting lines
+-------------------
+To read a single line the BBS sends this sequence:
+IAC G_STR <length>  <sync_low> <sync_med> <sync_high>  -or-
+IAC G_STRWR <length>  <sync_low> <sync_med> <sync_high>  (YAWC only)
+
+After the client has received that command it will read a line of <length> 
+characters locally. if the length is negative then the absolute amount of the
+value will be taken for the maximum length of the input and the entered 
+characters won't be printed on the screen but replaced by "*"'s (shadowed)
+so that this is used for getting passwords.
+
+Like G_NAME the client will send a \n character to mark the end of the line.
+
+The described behaviour applies to G_STR. G_STRWR (a YAWC only feature) will
+nearly act the same way but will "wrap" the last word into a buffer. This means
+that if the user enters a line and the line limit is reached the last word will
+be removed again (except the last chacter was a space character) and stored
+in a buffer. now if G_STRWR is called anew the wrapped word is being placed
+on the start of the new line.
+
+Note: The code for G_STRWR is 0xa6, the same that DOC uses for S_WHO. Don't
+mix that. Also, YAWC's WHO_S code (183) is not the same as DOC's S_WHO.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC G_STR|G_STRWR <option> <sync_low> <sync_med> <sync_high>
+BBS     (waits for IAC BLOCK afterwards)
+
+client> IAC BLOCK
+client> <entered name, first letters capitalized>
+client> \n
+-------------------------------------------------------------------------------
+IAC=255, G_STRWR=166, G_STR=162, BLOCK=161, \n=10.
+-------------------------------------------------------------------------------
+
+3.4. Getting posts
+-------------------
+To get a post the BBS sends this sequence:
+IAC G_POST <upload>  <sync_low> <sync_med> <sync_high>
+
+upload can have th following values:
+  - 1: normal message input
+  - 2: post upload, end with <ctrl-D>
+  - 3: editor-edit
+
+upload option 3 (editor-edit) is a YAWC only feature. It will start the editor
+right at the beginning for entering the post.
+
+After finishing the post the client sends back to the BBS
+ * an IAC BLOCK
+ * the post _if_ the user didn't abort posting
+ * a <Ctrl-D> character and
+ * an 'a' or 's' character depending of the user's action (abort or save).
+
+The BBS will only accept a maximum amount of 47800 bytes per post.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC G_POST <upload> <sync_low> <sync_med> <sync_high>
+BBS     (waits for IAC BLOCK afterwards)
+
+client> IAC BLOCK
+client> <the post if not aborted>  (47800 bytes max.)
+client> <Ctrl-D>
+client> <a> -or- <s>
+-------------------------------------------------------------------------------
+IAC=255, G_POST=165, BLOCK=161, ctrl-D=4.
+-------------------------------------------------------------------------------
+
+3.5. Getting X messages and profiles
+-------------------------------------
+To get a post the BBS sends this sequence:
+IAC G_LINES <which> <sync_low> <sync_med> <sync_high>
+
+On YAWC BBSs <which> can have the following values:
+  - 1 means express message,
+  - 2 means profile.
+ 
+it _seems_ that DOC BBSs use these values:
+  - 0 means "get a profile contents"
+  - 1 and optionally other bits in <which> set means express message.
+
+On DOC BBSs the which value is a series OR'd bits to allow or disable
+certain X overrides but I have been assured that most of them are obsolete. So
+it seems that relying on the lowest two bits in 'which' will be sufficient.
+
+Another difference between DOC and YAWC is how lines are handled. DOC _always_
+only accepts 5 lines for both X messages and profiles. YAWC's limitations are
+more flexible:
+  - profiles: up to 10 lines and up to 5*79 characters (if one of these limits
+    is reached no more characters will be accepted) and
+  - x messages: up to 20 lines and up to 7*79 characters (same)
+
+After the data have been entered an IAC BLOCK will be sent and then the data.
+To mark the end of the data block a \n character is send afterwards _and_
+YAWC BBSs need an additional \0 byte after that except an "ABORT" is sent to
+indicate to the BBS that the user aborted his message and the message is an
+express message.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC G_LINES <which> <sync_low> <sync_med> <sync_high>
+BBS     (waits for IAC BLOCK afterwards)
+
+client> IAC BLOCK
+client> <the entered lines>
+client> \n
+client> \0 (YAWC only and only if the message is an x message and not "ABORT")
+-------------------------------------------------------------------------------
+IAC=255, G_LINES=164, BLOCK=161, \n=10.
+-------------------------------------------------------------------------------
+
+3.6. Client configuration
+--------------------------
+To cause the client to do client configuration the BBS sends this sequence:
+IAC CONFIG <option> <sync_low> <sync_med> <sync_high>
+
+<option> will be ignored.
+
+After finishing the client just sends a newline (\n) back to the BBS to
+indicate that it finished configuring. Note that _no_ IAC BLOCK is sent
+although at least YAWC BBSs will usually accept (and ignore) IAC BLOCK here.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC CONFIG <option> <sync_low> <sync_med> <sync_high>
+BBS     (waits for \n character)
+
+client> \n
+-------------------------------------------------------------------------------
+IAC=255, G_CONFIG=174, BLOCK=161, \n=10.
+-------------------------------------------------------------------------------
+
+3.7. File editing (YAWC only)
+------------------------------
+To allow a client to edit a file (for example a roominfo locally on the
+client side this sequence will be sent:
+IAC FILE_S <file contents> IAC FILE_E
+IAC EDIT_S
+
+The client will read <file contents> into a temp file and upon EDIT_S it will
+start the editor to allow the user to edit the uploaded data.
+
+After finishing the client sends IAC BLOCK back, then sends the file contents
+(which mustn't contain NULL (\0) bytes and appends a \0 to mark the end of
+the file.
+
+Only up to 47800 bytes are accepted by the BBS.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC FILE_S
+BBS>    <file contents>
+BBS>    IAC FILE_E
+BBS>    IAC EDIT_S
+BBS     (waits for IAC BLOCK afterwards)
+
+client> IAC BLOCK
+client> <the edited file>  (47800 bytes max.)
+client> \0
+-------------------------------------------------------------------------------
+IAC=255, EDIT_S=181, FILE_E=180, FILE_S=179, BLOCK=161.
+-------------------------------------------------------------------------------
+
+4.   Online userlist handling
+------------------------------
+4.1. Basics
+------------
+The client is able to download a online user list from a DOC or YAWC BBS.
+This can be used for several purposes like displaying friends (and enemies)
+complared to local lists, for TAB name expansion and so on.
+
+DOC and YAWC differ a lot at this point. This is mainly because KHaglund
+understood the way the client processes wholists differently than it was
+intended.
+
+4.2. DOC
+---------
+The main purpose of the online user list download is to compare the names with
+friends listed in the .(yawc)bbsrc file to be able to spot them.
+Some clients already offer TAB expansion of usernames in the friend list, the
+CLientPro also supports to expand _any_ name after calling a <ctrl-w> list.
+after the client sends a <ctrl-W> to the server the BBS answers with an IAC
+S_WHO and then a series of one-byte flags and null-terminated user names.
+The flags mean:
+ - 0x80: "User has switched off the express messages"
+ - any other value: "User is able to receive x messages".
+
+After the last name is transmitted another single \0 byte is sent to the
+client to tell it that the wholist transfer is finished.
+
+Notes: -The code for S_WHO is 0xa6, the same that YAWC uses for G_STRWR. Don't
+        mix that. Also, YAWC's WHO_S code (183) is not the same as DOC's S_WHO.
+       -To cut down server load ISCA only responds to <ctrl-w> once every
+        two minutes. If you hit <ctrl-w> twice in a shorter time then only
+        an IAC S_WHO \0 \0 will be sent! that's why DOC clients have to keep
+        their old wholist entries to rely on them in that case.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+client> <ctrl-W>
+
+  a series of these wholist entries:
+/
+| BBS>    IAC S_WHO
+| BBS>    <flag>
+| BBS>    User Name
+| BBS>    \0
+\
+BBS>      \0	(indicates the end of the wholist transfer)
+
+-or-    (if the previous <ctrl-w> was less than 2 minutes ago)
+BBS>    IAC S_WHO \0 \0  (no data will be send)
+-------------------------------------------------------------------------------
+IAC=255, S_WHO=166.
+-------------------------------------------------------------------------------
+
+4.3. YAWC
+----------
+YAWC's approach is very different. The main purpose here is to fill a TAB list
+so that the user should be able to do TAB name expansion for all users online
+at that time after reading a wholist. Since many YAWC BBSs have their internal
+friendlists that function of the CLient had been deacticated for a long time.
+(I finally partly reactivated them to allow the user to always expand friend's
+names even before pulling a wholist and also after that.)
+
+YAWC doesn't have just a name transferring feature as DOC uses when the user
+hits <Ctrl-W> to see who of his friends is there. Instead the real <w>holist
+(usually the long version) is used. This means the user _has_ to hit <w> once
+to be able to TAB expand any online user names.
+
+The BBS will tell the CLient that a wholist is to follow now by sending IAC
+WHO_S.
+
+The name marking in the wholist lines has changed with time so there are now
+two possibilities. right before the username there can either be a
+  - <Ctrl-D> or a
+  - \r (carriage return)
+to mark the beginning of the name. The end of the name is determined as
+follows: The CLient will scan 20 characrers starting after <ctrl-D> and <\r>
+and then remove all trailing spaces. So the BBS _has_ to transmit at least
+((username length) - 20) spaces after the user name. After that the rest of
+the wholist line will follow.
+After the last wholist line has been transmitted the BBS will send IAC WHO_E.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS> IAC WHO_S
+BBS>
+
+  a series of these wholist entries:
+/
+| BBS>    <possible characters to be shown left of the username in the wholist>
+| BBS>    <Ctrl-D> -or- <\r>
+| BBS>    User Name
+| BBS>    some <space>s so the sum of the spaces and the username length will
+          be >= 20
+| BBS>    the rest of the wholist line, terminated by a \n
+\
+BBS>      IAC WHO_E	(indicates the end of the wholist transfer)
+-------------------------------------------------------------------------------
+IAC=255, WHO_S=183, WHO_E=184, Ctrl-D=4, \r=13, \n=10.
+-------------------------------------------------------------------------------
+
+5.   Other BBS-client communication (YAWC and DOC)
+---------------------------------------------------
+5.1. eXpress message marking
+-----------------------------
+DOC and YAWC BBSs let the clients know when an X message is being transmitted.
+This may be used to filter out unwanted messages by having the names of the
+senders on the client's enemy list. YAWC doesn't make much use of it but the
+'x killing' feature now works again since the latest version of the CLientPro.
+
+The format is pretty simple: the BBS will send an IAC XMSG_S right before
+transmitting header and body of the x message and IAC XMSG_E right after it.
+no reaction from the client is expected by the BBS.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC XMSG_S
+BBS>    <x message>
+BBS>    IAC XMSG_E
+-------------------------------------------------------------------------------
+IAC=255, XMSG_S=167, XMSG_E=168.
+-------------------------------------------------------------------------------
+
+5.2. Post marking
+------------------
+DOC BBSs mark the transmitted posts similar to the express messages as 
+described in the previous chapter. The reason also is to allow the client to
+do some filter function.
+
+The protocol is only slightly more complicated than that one for x messages:
+the BBS sends a IAC POST_S before and IAC POST_E after the post. The client
+notifies the BBS if it kills a post. for that every received post is counted
+(starting value set by IAC START is 1) and the lowest byte of that number
+(numposts&0xff) is being sent back to let the BBS know which post has been
+killed. The whole sequence is
+IAC POST_K (numposts&0xff) 17.
+
+Most YAWC BBSs don't send the IAC POST_S and IAC POST_E seqeuncies so the 
+CLient can't kill posts. The CLientPro is however prepared for that so that
+as soon as those IACs will be implemented into the BBS that feature will
+also work for them (some YAWCs already did so). 
+
+The CLient should _not_ send the killing notification to a YAWC BBS, it 
+doesn't expect one and will most likely act weird if it receives one.
+
+YAWC BBSs should _only_ send POST_S and POST_E after that's negotiated with the
+CLient to not break older CLients - see chapter 7 for details.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC POST_S
+BBS>    <post>
+BBS>    IAC POST_E
+
+client> IAC POST_K numposts&0xff 17  (DOC only!)
+-------------------------------------------------------------------------------
+IAC=255, POST_S=169, POST_E=170, POST_K=177.
+-------------------------------------------------------------------------------
+
+5.3. -More- prompt marking
+---------------------------
+To allow the client to capture posts and other data but excluding any --more--
+prompts that may turn up they are enclosed by IAC MORE_M bytes. This is true
+for both DOC and YAWC. The BBS doesn't expect any special answer by the client.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC MORE_M
+BBS>    <post>
+BBS>    IAC MORE_M
+-------------------------------------------------------------------------------
+IAC=255, MORE_M=177.
+-------------------------------------------------------------------------------
+
+5.4. Idle / cutoff detection
+-----------------------------
+DOC BBSs send a IAC CLIENT sequency to the client every 10 minutes to see if
+the client is still connected the client should response with a IAC CLIENT too.
+
+YAWC BBSs don't have a standard way to detect cutoffs, no IAC CLIENTs are
+sent usually. Thanatos once made an attempt to detect if the client is idle
+by sending IAC CLIENT and the CLient would only respond if the user wasn't 
+idle for more than 6 minutes but this hasn't be used anywhere else, especially
+since this way of doing it wasn't very pretty. Another way has been found, see
+chapter 7 to find out more about that.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC CLIENT  (every 10 minutes, DOC only)
+client> IAC CLIENT  (DOC only) 
+-------------------------------------------------------------------------------
+IAC=255, CLIENT=160.
+-------------------------------------------------------------------------------
+
+5.5. Color config update (YAWC only)
+-----------------------------------------
+
+This is a YAWC addition to the DOC client protocol. it's to tell the client
+if it should show colors at all and if so if bold and/or flashing attributes
+should be allowed or not. This way after the user changed the corresponding 
+BBS setting the BBS can immediately tell the CLient about it so the client
+can use that change right after the user changed those configuration. The 
+format is this:
+IAC CONFIG US_ANSICOLORS US_NOFLASH US_NOBOLDCOLORS
+If US_ANSICOLORS is 1 the client will show colors, if 0 it won't. This will
+only filter out YAWC colors (see next chapter), not ANSI ESCAPE sequencies.
+If US_NOFLASH is 1 flashing will be disabled, enabled if 0.
+If US_NOBOLDCOLORS is 1 bold colors will be disabled, enabled if 0.
+
+YAWC doesn't expect any answer of this from the CLient.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC UPDATE <ansi flag> <noflash flag> <nobold flag>  (YAWC only)
+-------------------------------------------------------------------------------
+IAC=255, CLIENT=160.
+-------------------------------------------------------------------------------
+
+5.6. DOC and YAWC colors
+-------------------------
+Some DOC BBSs implemented a feature to allow users to use own colors at some
+places like doings and posts. The color notation is a two character sequency.
+The first is a '@', the second is usually the first letter of the desired
+color. upper case letters indicate foreground colors and lowercase letter
+background colors. to actually print a '@' two @'s ('@@') have to be used.
+For a complete listing of those codes see appendix A.
+
+This is only remotely interesting from the client perspective because the BBS
+generates the ANSI color code and sends it to the client. YAWC BBSs however
+usually sent the YAWC color code to the CLient and that client then transforms
+that into a color. that's why the CLient can switch on and off colors itself.
+The YAWC color sequency looks as follows: the first character is a <Ctrl-A>.
+after that the color code follows, as well usually the first letter of the
+color. Unlike DOC the _lowercase_ letters change the foreground colors and the
+_uppercase_ letters change the background. Also see appendix A for details.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    <Ctrl-A><color code character  (YAWC only, sent numerous times)
+BBS>    <ANSI color sequencies>  (DOC only, only if terminal set to ANSI)
+-------------------------------------------------------------------------------
+ctrl-A=1.
+-------------------------------------------------------------------------------
+
+5.7. Terminal size change
+--------------------------
+
+If the BBS client's terminal is being resized the terminal should generate a
+SIGWINCH signal which is catched by the clients which then send a NAWS
+sequency to the BBS to tell it about the size change. This NAWS code complies
+to RFC 1073. This is what is sent:
+IAC SB TELOPT_NAWS 0 0 0 <rows> IAC SE
+row is the current (new) number of rows the terminal has.
+
+So it's the same code that is also sent at connecting time by the client. The
+BBS shouldn't answer to this message except changing the screen size setting
+for the user.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+client> IAC SB TELOPT_NAWS 0 0 0 <rows> IAC SE (if client window was resized)
+-------------------------------------------------------------------------------
+IAC=255, SB=250, SE=240, TELOPT_NAWS=31.
+-------------------------------------------------------------------------------
+
+5.8. YAWC name marking
+-----------------------
+To be able to fill the CLient user's TAB list even if no <w> is pressed
+every time the CLientPro supports name marking. Fake YAWC color codes are
+used for that: Right before a username a <Ctrl-A><n> is sent and a <Ctrl-A><N>
+right after it. The text between them is considered a username by the CLient
+and added to the TAB list. If names in post headers and X message headers
+this enables to TAb expand the names of users that just sent messages to the
+recipient and who posted messages.
+This is a later extension of the YAWC protocol, only few BBSs support it but
+it won't break older CLients in any case.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>   Ctrl-A n <User Name> Ctrl-A N  (YAWC only, at various occasions)
+-------------------------------------------------------------------------------
+Ctrl-A=1
+-------------------------------------------------------------------------------
+
+6.   Disconnecting (YAWC and DOC)
+----------------------------------
+There's no real standard logout negotiation. If either side closes the sockets 
+so that the other side will get an error reading or writing that side will 
+just close the session as well.
+
+However newer YAWC CLients will send a IAC DO TELOPT_LOGOUT seqeuncy to the
+BBS right before closing the connection, as specified in RFC 727. This might 
+give the BBS the chance to close the connection properly but after Thantos BBS
+went down I don't think any BBS makes use of that at the moment.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+client> IAC DO TELOPT_LOGOUT (some newer YAWC CLient only, rarely used)
+-------------------------------------------------------------------------------
+IAC=255, DO=253, TELOPT_LOGOUT=18.
+-------------------------------------------------------------------------------
+
+7.   YAWC protocol extentions
+------------------------------
+7.1. Basics
+------------
+To make it possible to extend the YAWC CLient protocol without breaking older
+clients a feature negotiation has been developed. It goes as follows:
+The BBS sends a IAC DO CLIENT_OPTIONS to the client. old clients will just
+ignore this, negotiation-aware ones will respond with IAC WILL CLIENT_OPTIONS.
+The BBS can then go on asking the CLient to enable (or disable) certain 
+extentions by issuing 
+IAC SB CLIENT_OPTIONS <feature> ON|OFF
+where feature is the item of negotiation and ON means "enable the feature" and
+OFF means "disable feature".
+
+The CLient should now decide it the requested extention is implemented and can
+be processed and it responds with
+IAC SB CLIENT_OPTIONS <feature> OK|ERROR
+where OK means that the client is ready to support the feature and ERROR that
+it is not. The BBS should not enable that feature in that case.
+
+Note: You might notice that the usual IAC SE is missing that would be
+necessary according to the telnet RFCs. we just omit it because we do know
+exactly how many bytes are sent after the IAC SB CLIENT_OPTION sequency: 2.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC DO CLIENT_OPTIONS
+client> IAC WILL CLIENT_OPTIONS  (if aware of protocol extention)  -or-
+client> IAC WONT CLIENT_OPTIONS  (if aware but not willing to negotiate)  -or-
+client> (nothing, if unaware of protocol extention negotiation)
+
+BBS>    IAC SB CLIENT_OPTIONS <feature> ON|OFF
+client> IAC SB CLIENT_OPTIONS <feature> OK|ERROR
+-------------------------------------------------------------------------------
+IAC=255, DO=253, WONT=252, WILL=251, SB=250, CLIENT_OPTIONS=76, ON=3, OFF=2,
+OK=1, ERROR=0.
+-------------------------------------------------------------------------------
+
+7.2. Implemented extentions
+----------------------------
+These extentions are in use at some places right now:
+ * POST_MARK: send IAC POST_S and POST_E around posts.
+     Older clients will fail to properly handle IAC POST_S and POST_E properly
+     so it has to be made sure those codes will only be sent to a CLient that
+     really knows about them and can use them for the enemy post killing.
+  * TELOPT_LOGOUT: determine CLient idling
+     If this feature is enabled then the BBS will send a IAC WILL TELOPT_LOGOUT
+     one minute before it intends the CLient to boot (because the BBS thinks
+     the CLient user is idling. But the user might be in local editing mode
+     so it would be a bad idea to close the user's connection at that time.
+     Therefore when the CLient receives that code and knows that the user is
+     indeed active entering a message it'll answer with IAC DONT TELOPT_LOGOUT
+     and the BBS should set the user's idle time to 0 again.
+     (This feature can of course easily abused by modified clients to be logged
+     on forever, so the BBS should have a max time for only receiving those
+     TELOPT_LOGOUT signals and still boot the user after some time if he
+     doesn't show more activity.
+
+Summary of the network traffic:
+-------------------------------------------------------------------------------
+BBS>    IAC SB CLIENT_OPTIONS POST_MARK ON
+client> IAC SB CLIENT_OPTIONS POST_MARK OK
+BBS>    IAC SB CLIENT_OPTIONS TELOPT_LOGOUT ON
+client> IAC SB CLIENT_OPTIONS TELOPT_LOGOUT OK
+
+BBS>    <POST_S> (if POST_MARK enabled)
+BBS>    <post>
+BBS>    <POST_E> (if POST_MARK enabled)
+
+BBS>    IAC WILL TELOPT_LOGOUT
+client> IAC DONT TELOPT_LOGOUT (if the user was active less than 6 minutes ago)
+client> (no response if the user had been idle for longer than 6 minutes)
+
+-------------------------------------------------------------------------------
+IAC=255, DONT=254, DO=253, WILL=251, SB=250, POST_S=169, POST_E=170,
+CLIENT_OPTIONS=76, TELOPT_LOGOUT=18, ON=3, OFF=2, OK=1, ERROR=0.
+-------------------------------------------------------------------------------

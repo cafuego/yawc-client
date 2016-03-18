@@ -1,0 +1,44 @@
+##########################################################################
+#
+# This is the sample configuration file. It should go as .yawcbbsrc into
+# your home directory so the CLient can find it. After you successfully
+# compiled the CLient (with 'make') type 'make install' to do this.
+#
+# Any lines starting with a '#' or empty lines will be ignored.
+#
+###########################################################################
+
+# sites - change or reorder at will
+
+site0 monolith.cc.com.au Monolith BBS
+site1 jassyca.tu-chemnitz.de Jassyca BBS
+site2 131.172.42.220 LUCS BBS
+site3 137.92.12.115 Spinnaker BBS
+site4 208.28.195.133 Abyss BBS
+site5 bbs.jammin.net The BBS
+site6 129.27.203.155 Flexania BBS
+site7 pc23-c801.uibk.ac.at Globalvillage BBS
+site8 discordia.susqu.edu Discordia BBS
+site9 farsight.dyn.ml.org SonCrest BBS
+siteA vortex.cc.missouri.edu Fluff BBS
+siteB gatekeeper.hsc.edu Tigernet BBS
+siteC whip.isca.uiowa.edu ISCA BBS
+siteD jungle.yawc.net Jungle BBS
+siteE anglistik.uibk.ac.at Olymp BBS
+siteF cactus.cedarville.edu Cactus BBS
+siteG bbs.medio.mh.se Medio BBS
+siteH vdl.sub.net.au Virtual Donughtland
+siteI digitech.org Constellation & Digitech BBS
+siteJ 204.71.109.112 Gestalt BBS
+siteK 145.24.149.50 Brinta BBS
+siteL test1.giant.net Eagle's Nest BBS
+siteM mystical.keyedin.com StarBase 21 BBS
+
+# global variables
+
+editor vi
+macrokey 
+quit 
+susp 
+shell 
+capture 

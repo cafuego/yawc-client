@@ -1,0 +1,111 @@
+This log file starts with version 1.3. Prior changes are documented in the
+main.c and the README.1.3 file.
+
+Version 1.3a
+------------
+I changed the code so that it should be more compatible to the different
+cc versions. Included an aix and osf rule into the Makefile.
+No features were added
+
+Version 1.3b
+------------
+Two small bugs were fixed: 
+1) If the CLient is called with a sitename as parameter if now doesn't attempt
+   to use the auto login sequence of site0 anymore. ;)
+2) I accidently took out the
+   LDFLAGS = -s
+   line which caused the binary to remain unstripped
+
+Version 1.3c
+------------
+Another attempt to make the code more compatibe - I changed some variable types
+in function headers. I don't know why but now it compiles fine with IRIX's and
+hopefully also BSD's cc compiler.
+The user now gets a message when there's movement on another session than the 
+active one.
+
+Version 1.3d (silently released)
+------------
+Fixed some more bugs, mainly one that caused the CLient to consume a lot of
+processor time and one that didn't reset the login macro if the connection
+attempt failed.
+<Backspace> at the end of an input line now doesn't re-print the whole line
+every time anymore.
+Hitting ^D at the BBS's login name prompt now closes the connection immediately
+(inserted a fflush() there)
+
+Version 1.3e (silently released)
+------------
+VMS fix: replaced all strchr()s and index() with mystrchr() and strrchr() and
+rindex() with mystrrchr(). Other fixes to make the source more VMS-compatible.
+
+Version 1.3f
+------------
+Made <Ctrl-V> work again (along with other CTRL codes).
+Set the maximal line length for editor editing from 78 to 79 (which is the
+correct value. ;)
+Added an option to have colours switched on or off by default (SonCrest patch)
+<Ctrl-C> can now be used to abort an attempt to start a new session (thanks to
+MathFox for the idea of how to do it =).
+The CLient now supports up to 36 BBSs (A-Z, 0-9).
+BBS names or parts of it may be used as command line option to specify the BBS 
+to connect to.
+Made some patches to improve handling of OS-dependant code at compile time
+
+Version 1.3g
+------------
+Removed the cprintf() routine for compatibility reasons. Sad but necessary.
+I gave this version to some friends out, so I decided to give it an own version
+identification. Not much new here, contains some unfinished things.
+
+Version 1.3h
+------------
+The code compiles without any error messages now again on all systems I tested
+it on: Linux, SunOS, HP-UX, Ultrix, Irix, OSF/1 and NeXT.
+Removed a bug that caused the CLient to crash after multiple session switching
+on some systems.
+
+Version 1.3i
+------------
+some minor changes, mostly internal.
+started implementing a scanner for ANSI escape color sequences to keep track
+of the current color even if the BBS doesn't send ^A codes.
+Peole on the CLient wholist can now be TAB-expanded at any time at a BBS
+name prompt.
+Added the -F option to allow to finger the BBS host. A username can be
+specified right after the -F (without spaces, username spaces usually should
+be replaced with '_'s.
+
+Version 2.0
+-----------
+Finished DOC (ISCA) and ABC BBS client support
+Added a connect prompt to handle the 36 slots (+ command line slot) and modes
+(YAWC, DOC and telnet) properly. Standard key is <^B><^C> but it's
+configurable.
+Added <^B><+> and <^B><-> to scroll through the open sessions.
+Added <^B><?> to show which sessions are open and where are data waiting to
+be received.
+Added <^B><c> to access the config menu without being connected to a BBS
+Fixed a load problem, mostly on SunOS/Solaris systems - they reported that the
+CLient would raise the system load by 1 (which it probably did not btw.)
+Fixed incorrect scanning of a DOC <Ctrl-W> list on some systems
+(hopefully) fixed ANSI color code scanning to keep track of current color
+(hopefully) fixed the delete bug in the line input routine
+Fixed the way ABORT and PING are handled when entering an x message
+Fixed "too many files open" problem.
+Started coding a new input routine but it's not finished yet. can be activated
+by an option.
+First official release since version 1.2e
+
+Version 2.0 rev. A
+------------------
+Fixed some bugs: configuration option toggling, default key behaviour, \r-\n
+
+Version 2.0 rev. B
+------------------
+Nicolas of Global Village BBS added support for multiple X
+
+Version 2.0 rev. C
+------------------
+Nicolas of Global Village BBS added support for detecting BBS's that support
+multiple X

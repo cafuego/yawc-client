@@ -1,0 +1,29 @@
+This is a kind of private list where I collected everything I found interesting
+to improve. I will probably not implement everything listed here, maybe others
+do which will continue to working on the CLient after me.
+
+Bugs:
+deletion - fixed?
+ISCA auto reply
+SCO comp: 
+>BTW try making tha last parameter in the socket call IPPROTO_TCP (defined in
+><netinet/in.h>
+>I thought it was __SCO...
+
+Features to add / fix / improve:
+ - finish the new input routine!
+ - session encryption
+ - improve idle detection when in editor (stat())
+ - improve command line handling (enable to use e.g. -ntd instead of -n -t -d)
+ - init auto macro
+ - improved x author recognition routine
+ - separate temp files for each session, option to remove them at logout
+ - WinCLient-like config file (idea by DWD)? or maybe like XF86Config?
+
+go to last active session after quitting the current one
+save away message
+ports into .yawcbbsrc
+key for line re-print (editing mode)
+start config menu if no .yawcbbsrc present
+master pw change only
+quit all key

@@ -1,0 +1,1013 @@
+( Original location: ftp://jassyca.tu-chemnitz.de/pub/clients/client_doc.txt. )
+
+  ========= See README.v2.0 to learn about the latest enhancements! ========
+
+	   The YAWC-BBS-CLient (Unix version) - The Big Manual 
+	  =====================================================
+
+  Quickfinder
+ -------------
+For all who only want to have a quick look at something specific here's the
+general structure of this document:
+
+ Chapter	Description
+=======================================================================
+    0       Why this manual has been made; foreword
+    1       Introduction. Downloading, compiling, executing
+    2       Before the show begins - the configuration
+    3       How to use the CLient?
+    4       CLient-internal things - information for BBS programmers
+    5       So - why should you _not_ use the CLient?
+
+
+  Table of contents
+ -------------------
+
+0.	Why this manual has been made; a foreword
+
+1.	"Who's afraid of the CLient?"  -  Some introductory remarks
+1.1.	What is the CLient?
+1.2.	Why use the CLient, what advantages does it have over telnet?
+1.3.	Where the CLient comes from - A brief history
+1.4.	Where do I get the CLient from?
+1.5.	I have it - now what?
+1.6.	Compiling the CLient
+1.7.	The WinCLient
+
+2.      Before the show begins - the configuration
+2.1.	The configuration file .yawcbbsrc
+2.1.1.	Why a config file?
+2.1.2.	Where do I have to place the config file?
+2.1.3.	A configuration example
+2.1.4.	The site entries
+2.1.5.	The key definitions
+2.1.6.	The editor
+2.1.7.	Friend and enemy entries
+2.1.8.	Macro lines
+2.1.9.	ClientPro 2.0 extensions
+2.2.	Online configuration
+2.2.1.	Why should I use the CLient's config feature, how do I do it?
+2.2.2.	Friend and enemy lists
+2.2.3.	Local - BBS entries
+2.2.4.	Local - editor
+2.2.5.	Keys
+2.2.6.	Macros
+2.2.7.	Options
+2.3.	Environment variables
+
+3.	How to use the CLient
+3.1.	Basics
+3.2.	Command line parameters
+3.3.	Using friend und enemy lists
+3.4.	Standard- and user defined macros
+3.5.	Editor
+3.6.	Capturing - the CLient's clipboard
+3.7.    CLient's temp files
+3.8.    PR-DWD: Line editing feature
+
+4.      CLient-internal details
+4.1.	Who should read this chapter?
+4.2.	TAB list
+4.2.1.	How it works
+4.2.2.	Original wholist name marking
+4.2.3.	The new \1n\1N marking
+4.3.	Post killing
+4.4.	Idle detection
+4.5. 	CLient feature negotiation
+
+5       So - why should you _not_ use the CLient?
+
+------------------------------------------------------------------------------
+
+0.	Why this manual has been made
+
+The YAWC-BBS CLient has existed for quite some time but as far as I know
+nobody got around to documenting it. This might be one of the reasons why
+many people don't use it - they simply don't know enough about it, some of them
+even don't know about it's existence.
+
+This documentation is intended to clear things up. It should also be a useful
+reference manual which describes the functions of the CLients and might provide
+details even long term users don't know yet. I have been surprised myself
+about what I found at several places in the CLient's source code.
+
+I will try to describe nearly _all_ relevant aspects of the CLient so that
+we have every feature explained in this one document.
+
+The manual exclusively deals with the Unix version of the CLient (with the
+exception of chapter 1.7. which holds some information about the WinCLient)
+and will concentrate on the latest Unix CLient version, the PR-DWD CLient.
+It is also often referred to as CLient Pro.
+
+Special thanks to Martin Fay for proof reading the English version of this
+documentation and giving valuable hints for improving it.
+
+       Chemnitz, 8/9/96 - Sven Winnecke, aka. 'Flint'.
+
+------------------------------------------------------------------------------
+
+1.	"Who's afraid of the CLient?" - Some introductory remarks
+
+1.1.	What is the CLient?
+
+The CLient is a program which can connect to YAWC BBS systems. Like a telnet
+applications it builds a connection from the user's computer to the BBS's
+host, but the type of connection is designed only to interact with those
+YAWCs.
+
+Nowadays there are CLients for many operating systems, for example for Windows
+(the WinCLient by Martin Fay (MyLittlePonyTail)) and many Unix flavours (Linux,
+SunOS, AIX and many more). CLients for Macintosh and the platform-independant
+WWW-language Java are under development.
+For more information about the WinCLient see chapter 1.7.
+
+
+1.2.	Why use the CLient, what advantages does it have over telnet?
+
+There are many advantages, here are four of them:
+  * All text entry (posts, express messages, names and so on) is done
+    locally at the user's machine and sent to the BBS as one block when
+    finished. This way you don't have to wait until the BBS echoes every one of
+    your keystrokes back but can type fluently - the effective net lag you
+    experience gets reduced dramatically.
+  * If there are so many users connecting that the BBS can't hold them all
+    and has to queue them up CLient users are treated preferentially - they'll
+    jump over all those who're using telnet. E.g. if there are 2 CLient users
+    and 5 telnet users in the queue and you connect with a CLient you won't get
+    placed as #8 but as #3.
+  * You can define as many friends and enemies as you like (which are users
+    you have a lot to do with or those you can't stand). Most of the YAWC
+    BBSs already have internal lists like that but they're not very big.
+    See chapter 3.3. for a remark about the friends list.
+  * You can record key macros so you don't have to type in key sequencies you
+    often use.
+
+
+1.3.	Where the CLient comes from - A brief history
+
+The YAWC-CLient has it's origin in a similar program which has been used to
+connect to one of the most famous DOC-style BBS, ISCA (Iowa, USA). It was
+written by the ISCA user Serendipity. Kenneth Haglund, the author of the YAWC
+code, took the sources and adapted it to work with YAWC BBSs.
+
+After it had been released there have been several approaches of improvement
+(i.e. the flexclient by Flex Able), but the version made by Peter Rozemaal
+(MathFox) finally achieved the most popularity. The latest development, the
+PR-DWD CLient by Dave Cridland (Diamond White) and improved by Sven
+Winnecke (Flint) has been derived from it. The current version of the CLient
+is CLientPro 2.0.
+
+
+1.4.	Where do I get the CLient from?
+
+There are several FTP servers where the CLient is stored. Two of them might
+be the recommended to go to, since they hold the biggest variety of pre-
+compiled CLients and the latest as well as some older versions of CLients are
+stoered here. Their addresses are:
+
+  * jassyca.tu-chemnitz.de, 		cd to /pub/clients/unix, and
+  * cal022011.student.utwente.nl,	/pub/clients/unix/pro
+
+(If you're after the WinCLient, have a look at chapter 1.7.)
+
+In this directory you'll find the latest CLients for UNIX style systems. If
+you look around from there you'll find other versions as well.
+
+Especially you'll find pre-compiled CLients (as mentioned) but also the sources
+for those of you who have (or want) to compile the CLient themselves.
+If you're not sure about your UNIX version, type 'uname' or even 'uname -a' at
+your UNIX command prompt, this should give you a hint.
+
+As a general rule nearly every BBS has an FTP server where CLients are to be
+found - just have a look at your home BBS's server.
+
+Make sure your download type is set to binary while downloading or the files
+you get will be broken.
+
+
+1.5.	I have it - now what?
+
+  * DON'T FORGET to download the .yawcbbsrc file as well when getting the
+    CLient! Why? See chapter 2.1.1. for an answer.
+  * When you have the CLient you should rename it to something more handy,
+    i.e. 'yawc'. This can be done with 'mv your_long_client_name yawc'.
+    (of course without the '').
+  * TO MAKE THE CLIENT EXECUTABLE you also have to perform a 'chmod 755 yawc'.
+  * That's it - now try to call 'yawc' or './yawc'.
+
+1.6.	Compiling the CLient
+
+If you want to use the CLient on a (Unix) system and can't find an appropriate
+binary you can try to compile the CLient yourself (if a compiler, preferrably
+gcc, and the 'make' utility are installed on that host). In order to do so,
+only these steps have to be taken (hopefully):
+
+  1) get the sources, e.g. from the directory mentioned above, or via WWW as
+
+     ftp://jassyca.tu-chemnitz.de/pub/cliens/unix/CLientPro2.0.src.tar.gz
+
+  2) uncompress the sources with
+
+     gzip -d CLientPro2.0.src.tar.gz; tar -xvf CLientPro2.0.src.tar.gz
+     (or, if GNU-tar is present, just tar -xvzf CLientPro2.0.src.tar.gz)
+
+  3) change into the CLient directory (cd CLient) and
+
+  4) execute 'make' (again without the '' of course ;)
+
+If everything went okay you should find a binary called 'yawc' in the
+CLient directory - that's your CLient. Not that hard, hm? =)
+
+All warnings the compiler might print can safely be ignored as long as it
+says 'BBS client successfully compiled.' at the end.
+
+If you compile a CLient because you didn't find a binary for it please upload
+your freshly compiled binary to Jassyca's server, will you? So it can be
+added to the CLient archive and will be available for the other users.
+
+If the compiling fails for reasons beyond your knowledge there's a CLient
+forum on nearly every BBS where you can go and ask what might have gone wrong.
+
+
+1.7.	The WinCLient
+
+As mentioned before there is a Windows version of the CLient, two of them even:
+one for Windows 3.x and one for Windows 95. They have been developed by
+Martin Fay (MyLittlePonyTail), and continually being improved.
+
+These CLients can be found at
+
+ ftp jassyca.tu-chemnitz.de	  /pub/clients/windows  and
+ ftp cal022011.student.utwente.nl  /pub/clients/windows.
+
+But there are several other ftp servers who host the WinCLient as well.
+
+The latest is version 1 beta 6, the corresponding files are wincl1b6.zip
+(Win3.x) and winCLient_95_beta6.zip (Windows 95).
+
+Just download the right one, unpack it using unzip, pkunzip or winzip (whatever
+you have installed on your system) and start the yawc.exe - and off you go. =)
+
+The WinCLient has a pretty good online help so refer to it for more inform-
+ation.
+
+------------------------------------------------------------------------------
+
+2.      Before the show begins - the configuration
+
+2.1.	The configuration file .yawcbbsrc
+
+2.1.1.	Why a config file?
+
+Basically if you have the CLient binary you don't need anything else to connect
+to BBSs. But: the CLient will need to connect to the default BBS that is hard-
+coded (if you have the sources: it's the line "#define BBSHOST ..." in defs.h)
+before you can do anything else. And you will not be able to access certain
+CLient functions (which are described in the chapters 2.1.3. and 3.4.) without
+having configured them. The first limitation doesn't apply for the PR-DWD
+CLients (see section 3.2.), but you'll find that setting up the configuration
+file .yawcbbsrc makes things much easier.
+
+
+2.1.2.	Where do I have to place the config file?
+
+The CLient has three places where it searches for a config file:
+
+  * First it checks if there's an environment variable $BBSRC. If it exists
+    the CLient takes it's value as path and name of the config file.
+    E.g. if BBSRC is set to "/usr/local/.yawcbbsrc" then the CLient will try
+    to open this file as it's configuration.
+
+  * If there's no BBSrc to be found the CLient tries to access the /etc/passwd
+    to determine the user's home directory and tries to open a file called
+    .yawcbbsrc there and it's configuration.
+
+  * If that fails as well the CLient tries to access the .yawcbbsrc in the
+    directory the environment variable $HOME points at. Usually this will
+    be the same as stated in the password file.
+
+So you should put your .yawcbbsrc file into your home directory if possible.
+
+
+2.1.3.	A configuration example
+
+The CLient config file is a text file, you can edit it with any text editor
+without any problems. The structure of the file is rather fixed, meaning that
+the order of the entries is important and you shouldn't put unexpected stuff
+into it or the CLient won't be able to read it without errors.
+Exceptions are:
+  * empty lines; these can be included anywhere, and
+  * lines with a '#' (hash sign) at the very first position (mustn't even be
+    preceeded by spaces or tabs), similar to shell script comments.
+
+Here's an example file which should work with every Unix CLient:
+
+---------------------- Contents of the .yawcbbsrc file -----------------------
+editor vi
+site0 cal022011.student.utwente.nl
+site1 jassyca.tu-chemnitz.de
+site2 compsoc.cs.latrobe.edu.au
+site3 137.154.79.13
+site4 abyss.access.one.net
+site5 bbs.resus.univ-mrs.fr
+site6 pc7-c609.uibk.ac.at
+site7 boehlinux.kfunigraz.ac.at
+site8 rudolf.canberra.edu.au
+site9 pc23-c801.uibk.ac.at
+macrokey ^B
+quit ^F
+susp ^Z
+shell ^Y
+capture ^X
+------------------------------- End of file  ---------------------------------
+
+The special entries (^B, ^F and the like) can either be separate characters
+(a single '^' (caret sign) and subsequent B, F and so on) or the actual
+control characters (<Ctrl-B>, <Ctrl-F>...) which most editors show like in the
+example.
+You can enter these codes with many editors as well, for example using vi where
+you have to hit <Ctrl-V> and then your control code to get it included into
+your text instead of having it executed by the editor. See also section 2.1.5.
+and 3.4. for more information about the defined keys.
+
+Lines which are longer than 80 characters are ignored by the CLient.
+
+The .yawcbbsrc entries are explained in the next chapters.
+
+
+2.1.4.	The site entries
+
+Curently the CLient can handle up to 10 BBS entries in it's .yawcbbsrc, they
+are attached to the digits from 0 to 9. This attachment is done with the site
+entries (often also called 'slots'). A line like
+
+site1 jassyca.tu-chemnitz.de
+
+assigns the BBS address 'jassyca.tu-chemnitz.de' to the number 1. You can also
+use the IP numbers instead of the alphanumeric host name, like this:
+
+site1 134.109.48.2
+
+Both line do the same; using IP number speeds up building the connection a bit
+but IP number usually get changed faster than symbolic names. So decide for
+yourself what you want to use. If you want my suggestion though use symbolic
+names. =)
+
+To learn how to choose one of these sites using command line options or command
+hotkeys see chapter 3.4 or 3.2.
+
+site0 has a special meaning: When the CLient is called it firstly makes a
+connection to this BBS before it allows further actions (except for the
+PR-DWD Client where you can override this entry via command line option).
+
+
+2.1.5.	The key definitions
+
+The CLient has some standard functions built-in which it can perform without
+needing to bother the BBS with.
+
+See section 3.4. for a description of these functions. Basically no key
+definition line is necessary to be present in the config file - the function
+corresponding to the missing definition just won't be available (or no function
+at all if the macro key definition is missing). See also section 2.1.3. for
+a description of the allowed formats of the lines.
+Recognized keywords are: macrokey, quit, susp, shell and capture. The order of
+these keywords aren't important as long as they're standing together.
+
+
+2.1.6.	The editor
+
+This line holds the program which should be executed if the BBS offers to
+edit a text or file. If this editor is present in one of the directories
+included in your search path just writing the editor name is sufficient,
+otherwise you have to specify the whole path and name of the editor. Example:
+
+editor /home/your_login_name/editor_collection/joe
+
+will call the editor joe which is stored in the directory
+/home/your_login_name/editor_collection/. You can choose any editor as long as
+it accepts a file name as parameter. See chapter 3.5. for what happens if you
+don't specifiy this.
+
+
+2.1.7.	Friend und enemy entries
+
+====> See chapter 3.3. for info about the status of the friends list! <====
+
+Other lines that might appear in your .yawcbbsrc file have the keyword
+'friend' and 'enemy' in it, followed by a user name. User with this name will
+be treated as friend or enemy by the CLient. See also section 3.3. for that.
+
+
+2.1.8.	Macro lines
+
+Finally there may be macro definition lines in the .yawcbbsrc file (see chapter
+3.4 for more infos about macros). The syntax is like this:
+
+macro X abcde^Ay|
+
+where X is the macro to be defined, abcde^Ay is the string to be assigned to
+that macro and | is a terminator (not to be found in non-PR CLients). As you
+can see special characters (like ^M for <return> or ^A, the colour marker) are
+allowed and they can also be written either as two letter code ('^' and
+subsequent character) or as the actual control code.
+
+
+2.1.9.	CLientPro 2.0 extensions
+
+Since a CLient option has been added with CLientPro version 2.0 there are also
+corresponding lines in the .yawcbbsrc. It is
+
+nowarnings
+
+with a following 0 or 1. If it's a 1 then all CLient-generated logout warnings
+are being suppressed, if it's a 0 (better: anything other than 1) then they
+are shown. See also section 2.2.4.
+
+colour
+
+with a following 0 or 1. If it's a 1 then the CLient will start in color mode
+and e.g. display BBS login screen colored if colors are sent. if it's 0 then
+the standard behaviour is black/white.
+
+2.2.	Online configuration
+
+2.2.1.	Why should I use the CLient's config feature, how do I do it?
+
+You can change the .yawcbbsrc settings directly from within the running CLient with the CLient
+config menu. This should also be the preferred way of changing your configuration since you (neary)
+cannot generate syntax errors in the config file this way which is well possible when editing the
+file manually. So do that manual change only if
+
+  * you know what you do
+  * the CLient refuses to start with the current settings or
+  * you want to change something before you want to login somewhere again.
+
+Nearly all YAWC BBSs will bring you to the CLient config promt if you press
+<c><c> at the short (command) prompt. The line you get there should look like
+this:
+
+<E>nemy list <F>riend list <K>eys <L>ocal <M>acros <O>ptions ->
+
+All CLient options are reachable from here. The following chapters assume you
+are at this CLient config prompt.
+
+
+2.2.2.	Friend and enemy lists
+
+====> See chapter 3.3. for infos about the status of the friends lists! <====
+
+You can now configure your friend or enemy list by hitting <f> or <e> at the
+config prompt. You should get this now:
+
+<A>dd <D>elete <L>ist ->
+
+Here you can <a>dd a name to the list you chose, <d>elete one or <l>ist the
+current names of the list.
+
+After finishing the changes you can leave the list prompt pressing <q>,
+<Return> or <Space> and the changes come into action.
+
+
+2.2.3.	Local - BBS entries
+
+To change your BBS site list first hit <l> at the config prompt. This will
+bring you to the local promt
+
+<B>BS's <E>ditor ->
+
+where you press <b>. To change one of the entries you get shown now just
+hit the number key of the BBS entry and then enter the new address. If you
+just hit <Return> here the entry remains unchanged. You can repeat that as
+often as you like. ;) Leave the site prompt again with <q>, <Return> or
+<Space>.
+
+
+2.2.4.	Local - editor
+
+Being at this local prompt you can also change the editor the CLient should
+call. Hit <e> at the local prompt and then enter either only the name of the
+editor (if the editor is stored in a directory listed in your $PATH variable)
+or specify both full path and editor name (like in the example of section
+2.1.6). Again if you just hit <Return> the editor won't get changed.
+
+
+2.2.5.	Keys
+
+After hitting <k> you can specify the keys which should call the standard
+macros. Subsequently you can choose the macro key and the keys for 'exit
+CLient', 'suspend CLient', 'Shell out' and 'Capture'. see also chapters 3.4
+and 3.6.
+Be careful with picking your macro key so that it doesn't shadow a BBS
+function. The standard Key is ^B (which is <Ctrl-B>).
+
+
+2.2.6.	Makros
+
+The macro handling is a bit weird, so if you don't feel confident with the
+CLient in general it's better to skip this section for now.
+
+To define a macro press <m> at the CLient config prompt. This will lead you
+to the macro prompt
+
+<E>dit <L>ist ->
+
+Here you can list all your currently defined macros with <l> or change them
+with <e>. The latter will produce another prompt:
+
+Macro to edit (^B to end) ->
+
+Here you firstly have to hit the key you want the macro assign to. you can
+take nearly any key except the macro key itself and the number keys (since
+they're there to change BBSs - see section 3.4. for more info about that).
+You also shouldn't choose a key to which a standard macro had already be
+assigned since those standard functions will shadow your macro definition.
+
+After choosing the key you can go on to record your macro. All keys are
+stored with the exception of the macro key (usually ^B, as mentioned), it is
+used as indicator that you've finished entering the macro. So hit the macro
+key after you hacked all your keys for that macro in.
+
+If you hit ^B right after you chose the macro key then no macro gets stored;
+if there has been one for the same key if will be deleted.
+
+You can again repeat that as often as you wish. If you try to assign a key
+that already has been assigned the CLient will ask you if you're sure to
+overwrite it or not. if you press <y> here the old macro will be overwritten.
+
+Macros cannot be longer than 70 characters.
+
+by hitting ^B at the macro editing prompt you'll get back to the general
+macro prompt where <q>, <Return> or <Space> leads you back to the CLient
+config prompt.
+
+
+2.2.7.	Options
+
+For quite some time the options menu had been unused. The CLientPro 2.0
+now has some options. Hit <o> to get to the options menu, where you can toggle
+e.g. the option whether or not you want to get the CLient-generated logout
+warnings by pressing <1>. Leaving the menu when done as usual (<q>, <Return> or
+<Space>).
+
+
+2.3.	Environment variables
+
+As mentioned before the CLient can interpret certain environment variables.
+Here's a list of them (alphabetically sorted):
+
+  BBSRC		- Path and name of the confing file. See chapter 2.1.2.
+  BBSTMP	- Path where the temporary files (.yawcbbstmp und .yawcbbsedit)
+    are put in. The default value is determined similar to the
+    config file location, see section 3.7.
+  EDITOR	- Name of the editor to be called if not specified in the
+    .yawcbbsrc file; standard is 'vi' otherwise.
+  HOME		- have a look at the chapters 2.1.2. and 3.7 for this one.
+  SHELL		- Shell to be called w/ the shellmakro (^B^Y); standard:/bin/sh
+  STUART	- (NeXT hosts only) Seems as the terminal size can only be
+    determined on NeXT stations if this variable is set.
+  USER		- The user name on the system. Used to find the home directory
+    if the CLient fails to access the /etc/passwd file.
+
+------------------------------------------------------------------------------
+
+3.	How to use the CLient
+
+3.1.	Basics
+
+If you've finished configuration so far you can go on _using_ the CLient. After
+calling the CLient tries to build a connection to the specified default host and
+you can log in as usual. The BBS handling is nearly exactly as it would be if
+you'd use telnet for connecting so there shouldn't any problems with getting
+used to it. But you'll find addidional possibilities not present when using
+plain telnet and which represent the advantages of the CLient. These features
+and their usage are the subject of the following sections.
+
+
+3.2.	Command line parameters
+
+Since the PRclient it is possible to use command line parameters to specify
+the BBS the CLient should connect to. Dave Cridland extended the options
+handling so that they now allow a comfortable choosing of the BBS to get on.
+The PR-DWD CLient supports these options:
+
+  -s number	Connect to the BBS listed as site <number> in .yawcbbsrc
+  -h host name	Connect to the BBS host <host name>
+  -p number	use port <number> when connecting
+  -?		show the options currently supported and exit (PR-DWD 1.2E+)
+
+So by using the -h option you can even go to a BBS which is not even listed in
+your config file, e.g. if you just want to have a look of if your site list is
+full already.
+
+If you specify a host name as well as a slot number (in this order) then the
+CLient will put the host name into the specified slot number as soon as you
+go into to the <c>lient<c>onfig prompt and leave it again.
+Example:
+
+yawc -h jassyca.tu-chemnitz.de -s2
+
+will cause the CLient to connect to Jassyca BBS and will write the host
+name as site2 into your .yawcbbsrc as soon as you type <c><c><space> at the
+short prompt.
+
+
+3.3.	Using friend und enemy lists
+
+A feature which shows the origin of the YAWC CLient being the ISCA client are
+the friend and enemy lists. This is because all YAWC BBSs have such lists
+internally which work better and are the PREFERRED option to use. This is
+because the BBSs can take better care of people you like or dislike if it
+actually knows about them!
+
+These lists are rather limited on several boards though so the CLient could be
+used to extend these lists - after all it supports up to 200 friends and 50
+enemies.
+
+Unfortunately the friend list never worked or got fully ported from ISCA to YAWC
+(it's main purpose had been to show who's on from the specified friends) so
+the CLient's friend list does NOT have any effect at the moment. This might
+change in the future.
+
+This only leaves the enemy list. It's purpose is for instance to keep X
+messages by blacklisted people away from you. If such a user writes a message
+to you you'll only get a message saying "[X message by XXXXX killed]" instead
+of the actual X. If the BBS you're on supports the post killing feature the
+CLient can even filter out posts by your enemies. Currently only Monolith
+offers this, but Jassyca and probably some more BBSs will follow. See chapter
+4.4. for more info about that.
+
+
+3.4.	Standard- and user defined macros
+
+The Client provides the usage of key macros. Macros are functions or key
+sequence which are assigned to certain hot keys so if you hit these hot keys
+the macro gets 'played' or executed.
+
+To access any of the macros you first have to press the macro key to tell the
+CLient that you want to call a macro now. The standard macro key is <Ctrl-B>
+but you can change this by hitting <c><c><l><k> (key config).
+
+After hitting <Ctrl-B> the CLient waits for another key which specifies which
+macro should be activated.
+
+The most famous 'macros' (though they're more like functions) are the number
+keys to switch between BBS sessions. You can press <Ctrl-B> plus <0> to <9>
+and the CLient builds a connection to the BBS which is in the slot indicated
+by the number key you pressed (or switches to that BBS if already connected).
+Example: if you have this line in your .yawcbbsrc file:
+
+site1 jassyca.tu-chemnitz.de
+
+you assigned Jassyca BBS to number 1 and by pressing <Ctrl-B><1> the CLient
+will try to provide a connection to that BBS.
+
+Further there are four 'standard macros' which are also more functions than
+real macros but they're also called using the macro key. These are:
+
+ Macro Function		Description 
+-------------------------------------------------------------------------------
+  ^B^F	Quit 	  Close all connections and quit CLient execution
+  ^B^Z	Suspend	  Suspend CLient (return to shell); continue CLient with 'fg'
+  ^B^Y	Shell	  start a new subshell; return to CLient with 'exit'
+  ^B^X	Capture	  'capture' (record) the data coming from the BBS
+
+(The '^' (caret sign) stands for the combination with the Ctrl key, e.g.
+^B means <Ctrl-B>.)
+
+These keys can be changed too with <c><c><l><k>.
+
+If you should now find that you need to type certain key sequences often then
+you can define them as user defined macro like described in chapter 2.2.6.
+Example: you want to assign a macro to the <c> key which should toggle ANSI
+colours. This can be done by pressing these keys (from the short prompt):
+
+  <c><c><m><e><c><y><c><o><1><space><space><Ctrl-B><Ctrl-B><q><q>
+  ------------ -  - ---------------------- ---------------------
+        |      |  |	     	 |			|
+        |      | confirmation  	 |			|
+        | name of macro   macro contents   return from macro definition
+  edit macro
+
+and after that you can switch between colours and monochrome with <Ctrl-B><c>.
+
+
+3.5.	Editor
+
+To enter longer posts or the edit them after entering them normally you can
+use a text editor to do this. This editor will be called e.g. if you hit <E>
+(editor edit) or if you hit <e> at the post save prompt. The standard editor is
+vi but you can change that via config setting (<c><c><l><e>) or by setting the
+environment variable EDITOR (if there's no 'edior' line in the .yawcbbsrc).
+The editor will be called with a temp file name as parameter, this will usually
+be $HOME/.yawcbbsrc. You can then edit the text normally and after leaving the
+editor you should get back to the previous prompt.
+
+You can also use the CLient to upload complete text files. Just load them into
+the editor and then save and edit it to transfer them to the BBS.
+
+Before saving the CLient checks if the text is formatted correctly. If lines
+are too long or contain illegal characters the CLient will show a warning and
+refuse to upload your message to the BBS. you have to edit the text again then
+until all lines are correct.
+
+Unfortunately older CLients also refused to accept the <Ctrl-A> (ASCII 1) code
+which is used for colours, so that they didn't allow uploading colourized
+posts. This has been corrected with the PRclient and it's successors.
+
+
+3.6.	Capturing - the CLient's clipboard
+
+Another inheritance from the ISCA client is the capture feature. But it's still
+an effective way to copy BBS contents to you local hard disk. After activation
+the capturing (usually with <Ctrl-B><Ctrl-X>) a
+
+[Capture to temp file turned ON]
+
+will appear and all data being sent by the BBS (posts, wholists, wholists and
+so on) will be written to the temp file ($HOME/.yawcbbstmp) until you press
+<Ctrl-B><Ctrl-X>. The CLient will then print out a
+
+[Capture to temp file turned OFF]
+
+and the last characters are written to the file ("the output stream will be
+flushed") and the temp file will be closed. you can (and should) then copy
+the temp file to another location before the file contents will be overwritten
+by further actions.
+
+Presently all colours are removed from the captured posts whereas X messages
+often get stored coloured. Normal (long) wholists may be truncated while
+capturing - this should all be fixed in one of the next CLient releases.
+
+So it is probably better (safer) to use the BBS-internal clipboard which is
+accessible via CLient as well as via telnet, or if you want to capture posts
+switch off your X messages and avoid pressing <w> while capturing.
+
+
+3.7.    CLient's temp files
+
+The CLient uses two more files beside .yawcbbsrc: .yawcbbstmp and .yawcbbsedit.
+The location where the are searched and created is determined similar to the
+config file location:
+
+  * First it will be checked if there's a environment variable called $BBSTMP.
+    If it is present then the CLient uses the directory specified in there.
+  * If not the CLient tries to read the home directory from the /etc/passwd
+    file and uses that directory.
+  * If this fails as well the CLient takes the environment variable $HOME as
+    temp file directory.
+
+The .yawcbbsedit file will exclusively used as editor temp file. For all other
+actions that require a temp file (like normal message entering and capturing)
+.yawcbbstmp will be used.
+
+Both files are NOT deleted when the CLient exits but remain in the directory.
+If the CLient is not running you can remove them if you like.
+
+
+3.8.    PR-DWD: Line editing feature
+
+Since the DWD versions the CLient provides the possibility to correct
+mistakes you made by directly editing the line (a decent terminal assumed).
+Older CLients only allowed to delete the line back to the place where you
+wrote something wrong, write it anew and then re-write the rest of the line.
+Now you can use the left and right arrow keys to move the cursor along the
+line. You can then delete characters using the <backspace> key and the
+characters you enter will be inserted at the cursor position.
+
+Up to PR-DWD-1.2C this routine had a bug though which caused the CLient to
+crash (sometimes) if you tried line editing on a line with colours in it.
+This has been fixed in the later versions.
+
+From version 1.2E the UNIX-like <Ctrl-W> (delete word) and <Ctrl-U> (delete
+whole line) have been added.
+
+However if you've already started another line you cannot correct a mistake in
+the previous line with the line editing feature (You'll have to get the
+winCLient to be able to do that! - MLPT). If it's a post you're writing go into
+the editor before saving and correct the line there, if it's an X message write
+a DELETELINE as a single word at the line below the one with the mistake in it
+and the BBS will remove that line (and the DELETELINE itself of course ;)
+before sending the X so you can write it again.
+
+------------------------------------------------------------------------------
+
+4.      CLient-internal details
+
+4.1.	Who should read this chapter?
+
+As mentioned before the CLient has the ability to perform certain functions
+on its own. But to do that the CLient needs some help from the BBS, control
+codes that have to be sent. Some of these control codes are described here so
+that BBS programmer can support those features even if they don't know many
+details of the CLient code. Also Dave Cridland (Diamond White) implemented some
+interesting extensions to the PR-DWD CLient but they also need to be supported
+by the BBS.
+
+
+4.2.	TAB list
+
+4.2.1.	How it bascially works
+
+If a user hits the <TAB> key at a name prompt (via the get_name() function) this
+key doesn't get handed through to the BBS but the CLient tries to expand the
+name itself using a local names list. This local list is kept in memory and has
+to be re-built with every login. All pre-DWD versions built this list
+exclusively from the long wholist where the names are marked in a special way.
+The PR-DWD versions now also support a new and more general form of name
+marking which is described in chapter 4.2.3.
+
+That means that as long as the CLient didn't receive a long format wholist (or
+a marked name) <TAB> will not work.
+
+Every time a <w>holist is sent the whole name table will be re-created and all
+old entries are lost.
+
+
+4.2.2.	Original wholist name marking
+
+To make it possible for the CLient to recognize when a wholist is being
+transmitted (so that the CLient can build the TAB list) the long wholist must
+be enclosed with the byte sequence IAC WHO_S and IAC WHO_E. To do that make
+sure that this piece of code  is placed in the wholist() routine directly below
+printing the wholist header:
+
+#ifdef CLIENTSRC
+  if(level == 1)
+    {
+      putchar(IAC);
+      putchar(WHO_S);
+    }
+#endif
+
+In a similar way WHO_E has to be sent right _after_ the wholist has been
+transmitted.
+
+Within this block two traditional ways of name marking are used.
+In the original version a ^D (ASCII 4) code had been sent right before the
+user name. This kind of marking is supported by all CLients.
+
+Unfortunately that ^D character showed up at some terminals (due to bad CLient
+and telnet implementations) so that it was agreed to use a \r instead. If shown
+it would only cause the cursor to go to pos1 where it should be anyway on most
+BBSs. \r isn't supported by old CLients but there shouldn't be many of them
+in use anymore.
+
+Basic rule: if you use a lot if #ifdef CLIENTSRCs to make sure that the ^D or
+\r are only sent to CLients then you can use both since the CLient filters
+them and don't print them to the screen. If you do it this way then use ^D for
+maximum compatibility.
+
+When the CLient has found the beginning of a name it takes 20 characters from
+that position, cuts the trailing spaces and puts the resulting string into the
+name table.
+
+This table can handle up to 200 entries.
+
+
+4.2.3.	The new \1n\1N marking
+
+The new way of marking names is rather easy, flexible and safe. All user name
+used anywhere are enclosed with certain colour code-like sequences These can
+easily be found by new CLients but are ignored by others since there's no
+colour attached to them. The sequence marking the beginning of a name is \1n,
+the closing sequence is \1N. These codes are recognized by the DWD CLient and
+the string inbetween will be added to the TAB list.
+
+This way of marking can now be used for several purposes. I.e. if the names
+in X headers are \1n\1N-marked the CLient user can TAB these names even without
+having to read the <w>holist before. For BBSes that send arrival notifies this
+means that as soon as you see a user arrive their name can be TABed. It could
+also be used to build the TAB list from a _short_ wholist. Even the post headers
+could be changed this way, which can be used to enable the post killing feature,
+which is described in the next chapter.
+
+
+4.3.	Post killing
+
+The post killing feature also never really worked with the YAWC CLient -
+it hadn't been re-written to work with YAWC BBSs so no BBS supported this
+feature.
+
+This CLient version (2.0) supports post killing. The BBS needs to mark the
+user name in the post header _and_ send some IAC codes around the post to
+notify the CLient where the post begins and where it ends. These codes are
+IAC POST_S and IAC POST_E.
+
+To YAWC coders:
+To mark the user names you have to go into the msgform() routine and search
+for the switch(mtype) block there. You could enclose every %s there with
+\1n and \1N as described above (so '%s' gets changed to '\1n%s\1N'). However
+that wouldn't be wise probably because titled psots for example should always
+appear since they might contain important information, so that you should
+do the change only in the default: case branch.
+
+The implementation of sending the enclosing IACs is easy. Go to the readmsgs()
+function (messages.c) and replace the line
+
+      e=read_message(fullroom.FRpos[a], fullroom.FRnum[a]);
+
+with
+
+#ifdef CLIENTSRC
+      putchar(IAC);
+      putchar(POST_S);
+#endif
+      e=read_message(fullroom.FRpos[a], fullroom.FRnum[a]);
+#ifdef CLIENTSRC
+      putchar(IAC);
+      putchar(POST_E);
+#endif
+
+POST_S and POST_E are already defined in telnet.h but have never been used so
+far.
+
+After these changes post killing should work with the DWD CLient.
+Unfortunately this change confuses old CLients so it should ONLY be sent if
+there has been a feature negotiation about that. It's currently under
+discussion how such a negotiation should work, see chapter 4.5. for the
+current state of affairs.
+
+
+4.4.	Idle detection
+
+Another DWD feature is the possibility for the BBS to detect if the CLient user
+is idle or busy with local editing. This hasn't been thought about much yet so
+that users get booted by the BBS while entering a long post because the BBS
+assumed they'd be idle. This is because if the user is in local editing mode
+the CLient doesn't send anything to the BBS so that BBS had no possibility
+to check the idle status of the remote user.
+
+The DWD feature works like this: One minute before the BBS is going to
+log the user off because of inactivity it sends a IAC WILL TELOPT_LOGOUT to
+the CLient. IAC and WILL are defined in telnet.h, TELOPT_LOGOUT is specifed as
+
+#define TELOPT_LOGOUT   (unsigned char)18
+
+If an older CLient is connected it will ignore this signal. If it's a DWD
+CLient and the user _is_ idle it won't send anything back as well. So if
+there's no response to that sequence the BBS can close the connection one
+minute later. But if the CLient detects that the user is active (e.g. writing
+a post) it will send a IAC DONT TELOPT_LOGOUT back to the BBS which then
+should interpret this as activity and set the user's idletime to 0 again.
+
+But of course this could be abused by hacking the CLient and always send
+this sequence back. So if the CLient only gets these bytes it should close
+the connection anyway after a certain time.
+
+
+4.5.	CLient feature negotiation
+
+As mentioned there's now a discussion going on about how to implement a
+feature negotiation between BBS and CLient. This has become necessary
+especially to overcome the incompatbility between the post killing feature
+and older YAWC CLients (see section 4.3.).
+
+The current state is this:
+The BBS sends a IAC DO CLIENT_OPTIONS somewhere not long after the CLient logs
+in. Older CLients will ignore this sequence so the BBS must still be
+compliant to the basic CLient protocol even the oldest CLients can understand.
+The same applies if the CLient responds with IAC WONT CLIENT_OPTIONS.
+
+If however the CLient sends a IAC WILL CLIENT_OPTIONS then the BBS can go into
+sub negotiation mode. such a negotiation could look like this:
+
+  BBS: IAC SB CLIENT_OPTIONS POST_MARK ON
+  CLient: IAC SB CLIENT_OPTIONS POST_MARK OK (if feature will be supported) or
+          IAC SB CLIENT_OPTIONS POST_MARK ERROR (feature not supported).
+
+IAC, SB, DO, WILL and WONT have standard values (see telnet.h), and
+  CLIENT_OPTIONS = 76 (decimal),
+  POST_MARK      = 1,
+  ERROR = 0,
+  OK    = 1,
+  OFF   = 2 and
+  ON    = 3.
+DEXI_NAMES (= 2) could become another subject of negotiation.
+
+The values have the following meaning:
+  * CLIENT_OPTIONS: Is the Client capable of negotiating features?
+  * ERROR         : CLient can't do what the BBSs requests
+  * OK            : CLient will act as requested by the BBS
+  * OFF           : BBS asks for deactivation of the option
+  * ON            : BBS asks for activation of the option
+  * POST_MARK     : Can the CLient show marked post headers correctly and
+                    does it support post killing?
+  * DEXI_NAMES    : Does the CLient suport InterBBS input (Name@BBSName)?
+
+DEXI_NAMES however might disappear again because most BBSs will just call
+get_name with a quit_priv=5 and that is already supported by the PR-DWD-CLient
+as a mode to allow the <@> key. Note that the DWD-CLient returns a string with
+up to 80 characters if called with quit_priv=5 - make sure the variable you
+want to store the result in is big enough!
+
+------------------------------------------------------------------------------
+
+5       So - why should you _not_ use the CLient?
+
+Yeah - why? If you find a CLient for your system and have 100 kB disk space
+to allow for it, then go for it. It's really not that difficult to use (even
+if this manual scares you ;) - once you've used the CLient several times
+(especially when having slow connections) you'll never want to not have it!
+Trust me, I know what I'm talking about. =)
+

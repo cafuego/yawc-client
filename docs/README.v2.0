@@ -1,0 +1,330 @@
+              YAWC CLient 2.0 (PR-DWD-F, aka CLientPro)
+-------------------------------------------------------------------------------
+Contents:
+---------
+  1. Changes compared to the previous version, PR-DWD 1.2E
+  2. Description of the new features
+
+<not finished yet>
+
+Note: Read the INSTALL.* files how to install this software if you don't know
+      how to do it. For a complete documentation see client.manual.
+-------------------------------------------------------------------------------
+
+1. Changes compared to the previous version, PR-DWD 1.2E:
+==========================================================
+
+Features:
+  - Auto login (username only or username and password)
+    protecting of those passwords with a master password (DES encryption
+    routines made by Eric Young [eay@mincom.oz.au], see des.h for details)
+  - supports BBS comments (names) again, <c><c><l><b> changed a lot ;)
+  - more command line options (use -? switch to get a list) e.g. BBS can now 
+    be specified as 'yawc #', 'yawc -#' or 'yawc -s #' for max. compatibility
+    also you can now specify a hostname without having to type '-h' first.
+  - flexclient-like auto reply feature (<Ctrl-B><i>, <c><c><l><a>)
+  - keyboard lock function <Ctrl-B><I>, can be combined with auto-reply =)
+  - name scrolling (<Ctrl-N> / <Ctrl-K>)
+  - colour and monochrome capturing now fully possible (YAWC)
+  - CLient can now be used as ordinary telnet program ('-t' switch; e.g. in 
+    case your BBS's yawcserver is down), and you can still use the local 
+    editing features by activating them by hand
+  - the CLient now supports a -i option to connect in ISCA client mode
+
+  ...and don't forget to try the cursor keys (left/right) when entering 
+  posts/X messages! ;) In case you missed that in the PR-DWD-1.2 version. =)
+
+  See also the file client.manual for a complete CLient reference of all
+  features not mentioned here.
+
+
+Internal changes:
+  - supports BBS feature negotiation for 
+     * POST_MARK - allows killing of posts by ppl being on the CLients enemylist
+     * TELOPT_LOGOUT - prevents being logged out prematurely while posting
+    These options will come into action if your BBS supports them. =)
+  - CLient now tries 3 times to connect until it gives up (non-VMS)
+  - extended the state machine to be fully(?) telnet protocol compliant
+  - I cleaned up the code a bit, removed unused variables and rewrote some 
+    function headers for old-style compiler compatibility
+  - Changed the Makefile to try cc if gcc cannot be found (will this work?)
+  - The CLient is now also DOC and ABC client compatible
+
+2. Description of the new features
+===================================
+
+ Auto login    <c><c><l><b>, <c><c><l><m>, 'yawc #'
+----------------------------------------------------
+
+This might look scary. It is not. ;)
+
+This CLient version offers an auto login feature. This is done by storing
+usernames and passwords in the .yawcbbsrc file and copying them to a macro
+at login time and executing it. You can provide either only the username or
+username and password. The latter enables a complete auto login but implies
+that the password has to be in the CLient config file which is a potential
+security risk. The first method will enter the username automatically and then
+wait for you to enter the password manually.
+
+Even though the CLient sets the .yawcbbsrc to owner-read/write-only at every
+startup it is very insecure to have cleartext passwords in config file. 
+Therefore the CLient offers you to encrypt the passwords before saving them. 
+You can specify a 'master password' which you have to enter every time the
+Client starts up to be able to access the encrypted passwords.
+
+Login and password can be entered at the BBS prompt (<c><c><l><b>), see below
+for that (BBS prompt extensions).
+
+To change the master password type <c><c><l><m> at the short BBS prompt. If
+you already set a master password you will have to enter it again (correctly ;)
+before you can set a new one. Then enter the new password (twice) and all
+passwords given now and in the future will be encrypted before saving them to
+the config file.
+
+If no correct master password has been given no encrypted passwords cannot be
+decrypted and won't be changed. Unencrypted passwords can be changed however
+and new ones can be set (if file permission allows it). So only encrypted
+passwords are (relatively) safe against stealing/using.
+
+If you just hit <Return> at the new password prompt the password will be
+deleted so that you don't have to enter it anymore from the next CLient 
+startup. But note that this will mean that your BBS passwords aren't encrypted
+either if you specified any. So work without a master password ONLY if you
+
+  * didn't store any passwords in the .yawcbbsrc  or
+  * have a machine for your own where nobody has access to (and even here
+    (it's unsafe).
+
+The usernames will be saved in the .yawcbbsrc like
+username# User Name
+where # is the BBS slot number the name belongs to and User Name is the login
+name for that BBS.
+
+The passwords can be saved either as
+password# user-pwd|
+or
+pwd_encr# HHHHHHHHHHHHHHHH
+The first version would contain an unencrypted password (terminated with a |),
+the second specifies an encrypted password with H being hex digits (0-9,A-F).
+
+The master password will be saved (encrypted of course ;) like
+master_pw HHHHHHHHHHHHHHHH
+at the beginning of the .yawcbbsrc, it looks like a pwd_encr line.
+
+Don't try to switch sessions while the auto login is in progress, or the macro
+playing function might decide to send the remaining keystrokes to the wrong
+BBS.
+
+-------------------------------  WARNING  ------------------------------------
+There's (nearly) no encryption algorithm that has been _proven_ to be safe
+against being cracked. Same goes for DES. I tried hard to provide a secure
+means to protect your passwords but I cannot guarantee that I didn't make a 
+mistake while implementing the routines, or that the routines itself have no
+flaws in it. I made the implementation to the best of my knowledge. To
+encrypt the passwords a loop calling the actual encryption routine is performed
+100 times for each password and DES is known to be very safe. But be warned 
+that your passwords _could_ be stolen.
+------------------------------------------------------------------------------
+
+
+ BBS config Prompt extensions    <c><c><l><b>
+----------------------------------------------
+
+I've changed the BBS prompt (<c><c><l><b><number>) a bit. It now asks for
+  * the hostname (as usual)
+  * the BBS's name (BBS comment in early BBS CLients)
+  * the username on that BBS and
+  * the password there.
+
+If you just hit <Return> at the hostname prompt you'll be asked if you want
+to delete the data stored for the current slot. hit <y> to do so. if you hit
+<n> you'll be asked if you want to abort (in case you hit the number key by
+accident) and the slot will not be changed if you press <y>
+
+If you hit just <Return> at the BBS name prompt the BBS name won't be changed.
+
+If you hit just <Return> at the username or password prompt no username or 
+password information won't be saved to the .yawcbbsrc file.
+
+
+ Saving config changes    <c><c>< >
+------------------------------------
+
+you can now decide whether you want to save the changes you made in the CLient
+config (<c><c>). If you're at the CLient config prompt:
+
+<E>nemy list <F>riend list <K>eys <L>ocal <M>acros <O>ptions ->
+
+then you can hit
+  * <s>, <Space> or <Return> to save the config changed unconditionally
+  * <Q> to discard the changes unconditionally and
+  * <q> to be asked if the current configuration should be saved. 
+
+
+ Command line options    'yawc -?'
+-----------------------------------
+
+Some more command line options have been added. To make it easier for people
+who are used to other CLients there are now three ways to specify the
+connecting site: 'yawc 2', 'yawc -2' and 'yawc -s2' will equally select the
+BBS host of slot 2 to connect to.
+Another simplification: you can omit the '-h' of '-h bbs.host.name' when
+specifying a hostname - everything without a dash which is longer than two 
+characters will be treated as hostname
+
+The other new parameters are -t (see "Telnet mode" below), -l, -P, -n and -d.
+
+'yawc -?' will list all options and also print an explanation what they mean.
+For -P be sure that the 'ping' command can be found in your search path.
+
+ Auto reply    <Ctrl-B><i>
+---------------------------
+
+One of the flexclient's goodies is the auto reply feature, so I added a similar
+one here. It doesn't work the same way as in Flex's version but I chose the
+same hotkey, <Ctrl-B><i>.
+
+Like auto login the auto reply function bases on a macro. If you have set 
+the CLient into auto reply mode the CLient will play this macro after every
+IAC XMSG_E sequence (the BBS's X message end mark). it then sends a 'v' 
+(X reply), a text saying that this is an automatic message and a user-specified
+line (away message). 
+
+If you didn't enter such a line yet as you press <Ctrl-B><i> the CLient
+will ask for it, if t's there it will be used. To change an existing message
+press <c><c><l><a>.
+
+Since this function is a macro it wouldn't work while you're entering a post
+or a name, so the CLient will refuse to go into away mode while you're there.
+
+The away message won't be saved in the .yawcbbsrc file and will be asked anew
+in every session.
+
+
+ Keyboard locking    <Ctrl-B><I>
+---------------------------------
+
+Since you might want to leave the computer when you put the CLient into auto
+reply function it seemed logical to me to have a keyboard lock function as
+well. It's <Ctrl-B><Shift-I>. You _need_ to have entered a (valid) CLient
+master password before because that is what you have to enter to unlock the
+keyboard again.
+
+When you hit <Ctrl-B><I> the CLient will ask you if you want to combine the
+lock with the auto reply feature. If you hit <n> here only the lock function
+will come into action and all incoming data will be displayed as usual.  If 
+you hit <y> the procedure will be the same as described in the chapter above.
+
+After that the CLient will wait for any key which will bring up the password
+prompt. All functions, inclusively session switching or shelling out will be
+disabled. Enter the CLient password at the prompt to get access to your BBS 
+session again. To discourage password guessing the CLient waits one second 
+before it accepts another try. During the time you enter the password the
+auto reply feature won't work!
+
+
+ Name scrolling    <Ctrl-N>, <Ctrl-K>
+--------------------------------------
+
+Another known feature I now added is the name scrolling. If you're on a 
+username prompt you can now hit <Ctrl-N> and <Ctrl-K> which will give you
+all usernames you saw last on a <w>holist name by name. It works similar to
+the TAB key but ignores any given name parts. <Ctrl-N> moved down in the 
+wholist, <Ctrl-K> moves up. Currently no special names (like "- New User -"
+or "*Connecting*") are filtered out, that's something for the next release. ;)
+
+
+ Colour capturing    <Ctrl-B><trl-X>
+-------------------------------------
+
+I also fixed another feature - the capturing. It does now properly copy posts,
+wholists and X messages into your .yawcbbstmp file. When you hit the capture
+key (usually <Ctrl-X>) then you'll be asked if the CLient should leave all
+color codes in or if you want plain text capturing only, The CLient will then
+save all incoming texts into the temp file until you hit the capture key
+again or start posing. After that copy the .yawcbbstmp to a safe location
+before continuing working with the CLient to prevent the tempfile to be over-
+written.
+
+
+ Telnet mode   'yawc -t'
+-------------------------
+
+While working on a special part of the CLient routines (the IAC state machine)
+it came to my mind that it wouldn't be a big deal to extend it to be really
+telnet compatible, so I did it. By adding the command line option '-t' (or
+'-p 23' which does the same) the CLient will connect to the telnet port instead
+of the YAWC CLient port. E.g. to connect to BBS #1 via telnet type 
+
+  yawc -t 1
+
+and that's it. =)
+This very much defeats the idea of the CLient, since it now really acts as a
+telnet program but it's handy when you just tried to connect to the CLient
+server - just use the same line but append a '-t'.
+
+Since the CLient doesn't get any control characters when to go into local
+editing mode when on through the telnet poer (becuase the BBS doesn't even 
+know it's a CLient connecting) the local editing facilities cannot activated
+automatically. So I added a possibility to activate them manually. See 
+following chapter.
+
+ The manual mode switching (DOC hack)    <Ctrl-B><x>|<e>|<n>|<s>|<p>
+---------------------------------------------------------------------
+
+The idea to this came when I logged on at KaraNet BBS (a DOC-style BBS without
+any client support except pure telnet) and thought 'would there be a way to
+make the local editing features work here?'. When it was done I found that 
+it's also useful when a YAWC BBS currently hasn't got CLient support, so it
+might be of general interest.
+
+I made it so that you can switch into 5 different local modes modes manually
+by entering macro sequencies:
+
+  Macro         Function
+----------------------------------------------------------------------------
+<Ctrl-B><x>   X input mode (7 lines, cursor left/right support
+<Ctrl-B><e>   post entering mode. unlimited lines, save promt
+<Ctrl-B><n>   entering a user name (capitalizing first letters of each word
+<Ctrl-B><s>   entering one line of up to 80 characters
+<Ctrl-B><p>   entering a shadowed password
+
+These macros are ONLY available when using the telnet port (23), they won't
+shadow any _real_ macros when connected as real YAWC-CLient. Hit these 
+combinations when you're at the corresponding prompts. Examples:
+
+...BBS login screen...
+Login: <Ctrl-B><n>Your User Name<return>
+        ^^^^^^  ^ ^^^^^^^^^^^^^^ ^^^^^^
+Password: <Ctrl-B><p>**********<return>
+...        ^^^^^^  ^ ^^^^^^^^^^ ^^^^^^
+
+eXpress message to: <Ctrl-B><n>Recipents Name<enter>
+                     ^^^^^^  ^ ^^^^^^^^^^^^^^ ^^^^^
+><Ctrl-B><x>
+  ^^^^^^  ^
+bla bla bla - your text<return>
+^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^
+<return>
+ ^^^^^^
+
+(The parts underlines with '^'s is what you enter, the others are possible BBS
+texts.)
+Just play with it, it's not difficult once you get the hang of it. You can even
+your local editor to write or upload a post this way, hit <Ctrl-B><e> after
+you're in <e>dit mode on the BBS, then <return> on a blank line to get to the
+save prompt and then <e>. hit <s> for save and <a> for abort, as usual.
+
+You'll find all your texts echoed back by the BBS, this is because the BBS
+doesn't know that it doesn't have to - a good chance for you to check if
+everything is right. ;)
+
+
+-------------------------------------------------------------------------------
+
+That's about it I think. Just ask me (Flint) if you're stuck somewhere or found
+bugs (which are quite likely since much of the stuff I added was written from
+scratch and is not excessively tested yet (that's YOUR part ;).
+
+  Enjoy - Sven, aka. Flint.
+
