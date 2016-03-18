@@ -30,13 +30,12 @@ YAWC_editor		- the main routine
 #include "defs.h"
 #include "ext.h"
 
-struct buffer_lines	/* basic buffer line struct */
-  {
+struct buffer_lines {		/* basic buffer line struct */
     int len;			/* currently allocated # of bytes */
     char *data;			/* the string itself 		  */
     struct buffer_lines *prev;	/* previous line		  */
     struct buffer_lines *next;	/* next line			  */
-  };
+};
 
 /***********************************************************
 *
@@ -50,15 +49,15 @@ struct buffer_lines	/* basic buffer line struct */
 
 char *
 strrkhr(s, c)
-const char * s;
-int c;
+    const char *s;
+    int c;
 {
-const char      *p;
+    const char *p;
 
-  p = s;
-  for(; *s; ++s) ;
-  for(; s >= p && (*s == (char) c || !*s); --s) ;
-  return (char *) (s+1);
+    p = s;
+    for (; *s; ++s);
+    for (; s >= p && (*s == (char)c || !*s); --s);
+    return (char *)(s + 1);
 }
 
 /***********************************************************
@@ -67,18 +66,19 @@ const char      *p;
 * allocates a new buffer (10 safety bytes) line and filles it with spaces
 *
 ************************************************************/
-struct buffer_lines *alloc_line (length)
-int length;
+struct buffer_lines *
+alloc_line(length)
+    int length;
 {
-  struct buffer_lines *tmp;
+    struct buffer_lines *tmp;
 
-  tmp = (struct buffer_lines *) malloc (sizeof(struct buffer_lines));
-  tmp->data = (char *) malloc(length+11);
-  memset(tmp->data, ' ', length+10);
-  tmp->data[length] = '\0';
-  tmp->len = length;
-  tmp->next = NULL;
-  return (tmp);
+    tmp = (struct buffer_lines *)malloc(sizeof(struct buffer_lines));
+    tmp->data = (char *)malloc(length + 11);
+    memset(tmp->data, ' ', length + 10);
+    tmp->data[length] = '\0';
+    tmp->len = length;
+    tmp->next = NULL;
+    return (tmp);
 }
 
 /***********************************************************
@@ -87,12 +87,13 @@ int length;
 * makes space for 20 more characters on the current line
 *
 ************************************************************/
-void expand_line (line)
-struct buffer_lines *line;
+void
+expand_line(line)
+    struct buffer_lines *line;
 {
-  line->data = (char *) realloc (line->data, line->len+20);
-  line->len += 20;
-  memset(&line->data[line->len-20], ' ', 20);
+    line->data = (char *)realloc(line->data, line->len + 20);
+    line->len += 20;
+    memset(&line->data[line->len - 20], ' ', 20);
 }
 
 /***********************************************************
@@ -101,21 +102,20 @@ struct buffer_lines *line;
 * go to next line in virtual buffer, allocate one if necessary.
 *
 ************************************************************/
-struct buffer_lines *line_forw (curr, length)
-struct buffer_lines *curr;
-int length;
+struct buffer_lines *
+line_forw(curr, length)
+    struct buffer_lines *curr;
+    int length;
 {
-  struct buffer_lines *tmp;
+    struct buffer_lines *tmp;
 
-  if (curr->next == NULL)
-  {
-    tmp = alloc_line (length);
-    curr->next = tmp;
-    tmp->prev = curr;
-    return(tmp);
-  }
-  else
-    return(curr->next);
+    if (curr->next == NULL) {
+	tmp = alloc_line(length);
+	curr->next = tmp;
+	tmp->prev = curr;
+	return (tmp);
+    } else
+	return (curr->next);
 }
 
 /***********************************************************
@@ -124,13 +124,14 @@ int length;
 * go to previous line in virtual buffer.
 *
 ************************************************************/
-struct buffer_lines *line_back (curr)
-struct buffer_lines *curr;
+struct buffer_lines *
+line_back(curr)
+    struct buffer_lines *curr;
 {
-  if (curr->prev != NULL)
-    return(curr->prev);
-  else
-    return(curr);
+    if (curr->prev != NULL)
+	return (curr->prev);
+    else
+	return (curr);
 }
 
 /***********************************************************
@@ -139,13 +140,14 @@ struct buffer_lines *curr;
 * st will be truncated by cutting off any trailing spaces
 *
 ************************************************************/
-void trim_line (st)
-char *st;
+void
+trim_line(st)
+    char *st;
 {
-  char *t1;
+    char *t1;
 
-  t1 = strrkhr(st, ' ');
-  *t1 = '\0';
+    t1 = strrkhr(st, ' ');
+    *t1 = '\0';
 }
 
 /***********************************************************
@@ -159,36 +161,36 @@ char *st;
 * Function highly depends on the ANSI sequences <ESC><7> and <ESC><8>.
 *
 ************************************************************/
-void print_line (line, mode)
-char *line;
-int mode;
+void
+print_line(line, mode)
+    char *line;
+    int mode;
 {
-  char *tmp, *tmp2;
+    char *tmp, *tmp2;
 
-  tmp = (char *) malloc (strlen(line)+2);
-  tmp2= (char *) malloc (strlen(tmp)+1);
-  strcpy (tmp, line); 
-  if (strlen(tmp)>0)  
-    trim_line (tmp);
-  if ((strlen(tmp)>0) || (mode == 1))  
-    switch (mode)
-    {
-      case 0:
-	colorize(tmp);
-	break;
-      case 1:
-	sprintf(tmp2,"7%s 8", tmp);
-	colorize(tmp2);
-	break;
-      case 2:
-	sprintf(tmp2,"7%s8", tmp);
-	colorize(tmp2);
-	break;
-    }
-  free(tmp);
-  free(tmp2);
+    tmp = (char *)malloc(strlen(line) + 2);
+    tmp2 = (char *)malloc(strlen(tmp) + 1);
+    strcpy(tmp, line);
+    if (strlen(tmp) > 0)
+	trim_line(tmp);
+    if ((strlen(tmp) > 0) || (mode == 1))
+	switch (mode) {
+			case 0:
+			    colorize(tmp);
+			    break;
+			case 1:
+			    sprintf(tmp2, "7%s 8", tmp);
+			    colorize(tmp2);
+			    break;
+			case 2:
+			    sprintf(tmp2, "7%s8", tmp);
+			    colorize(tmp2);
+			    break;
+	}
+    free(tmp);
+    free(tmp2);
 }
-  
+
 /***********************************************************
 *
 * reprint_colours()
@@ -200,42 +202,40 @@ int mode;
 * arguments... :')
 *
 ************************************************************/
-void reprint_colours(anchor, curr, p_x, flags, pc)
-struct buffer_lines *anchor; 
-struct buffer_lines *curr;
-int p_x;
-int flags;
-char *pc;
+void
+reprint_colours(anchor, curr, p_x, flags, pc)
+    struct buffer_lines *anchor;
+    struct buffer_lines *curr;
+    int p_x;
+    int flags;
+    char *pc;
 {
-  struct buffer_lines *tmp;
-  char *p, tmp2[3];
-  int i;
+    struct buffer_lines *tmp;
+    char *p, tmp2[3];
+    int i;
 
-  colorize(pc);
+    colorize(pc);
 
-  tmp = anchor;
-  while (tmp != curr)
-  {
-    for (i=0; i<strlen(tmp->data); i++)
-      if (tmp->data[i] == 1)
-      {
-	sprintf(tmp2,"\1%c", tmp->data[i+1]);
-	colorize(tmp2);
-      }
-    tmp = tmp->next;
-  }
-
-  for (i=0; i<p_x; i++)
-    if (tmp->data[i] == 1)
-    {
-	sprintf(tmp2,"\1%c", tmp->data[i+1]);
-	colorize(tmp2);
+    tmp = anchor;
+    while (tmp != curr) {
+	for (i = 0; i < strlen(tmp->data); i++)
+	    if (tmp->data[i] == 1) {
+		sprintf(tmp2, "\1%c", tmp->data[i + 1]);
+		colorize(tmp2);
+	    }
+	tmp = tmp->next;
     }
 
-  p = (char *) malloc (5);   /* fix to set the cursor colour on some xterms */
-  sprintf(p, "%c\b",tmp->data[p_x]);
-  colorize(p);
-  free(p);
+    for (i = 0; i < p_x; i++)
+	if (tmp->data[i] == 1) {
+	    sprintf(tmp2, "\1%c", tmp->data[i + 1]);
+	    colorize(tmp2);
+	}
+    p = (char *)malloc(5);	/* fix to set the cursor colour on some
+				 * xterms */
+    sprintf(p, "%c\b", tmp->data[p_x]);
+    colorize(p);
+    free(p);
 }
 
 /***********************************************************
@@ -244,17 +244,18 @@ char *pc;
 * determining the real line position by skipping the colour codes
 *
 ************************************************************/
-int get_realpos(curr, p_x)
-struct buffer_lines *curr;
-int p_x;
+int
+get_realpos(curr, p_x)
+    struct buffer_lines *curr;
+    int p_x;
 {
-  int i, j=-1;
-  for (i=0; i<=p_x; i++)
-   if (curr->data[i] != 1)
-     j++;
-   else
-     i++;
-  return (j);
+    int i, j = -1;
+    for (i = 0; i <= p_x; i++)
+	if (curr->data[i] != 1)
+	    j++;
+	else
+	    i++;
+    return (j);
 }
 
 /***********************************************************
@@ -263,19 +264,19 @@ int p_x;
 * returns p_x for the real line position p (without colorus)
 *
 ************************************************************/
-int set_realpos(curr, p)
-struct buffer_lines *curr;
-int p;
+int
+set_realpos(curr, p)
+    struct buffer_lines *curr;
+    int p;
 {
-  int i, j=-1;
+    int i, j = -1;
 
-  for (i=0; i<=p; i++)
-  {
-    j++;
-    while (curr->data[j] == 1)
-      j+=2;
-  }
-  return (j);
+    for (i = 0; i <= p; i++) {
+	j++;
+	while (curr->data[j] == 1)
+	    j += 2;
+    }
+    return (j);
 }
 
 /***********************************************************
@@ -286,43 +287,40 @@ int p;
 *   mode: 0 = cursor moved down, 1 = cursor moved up, 2 = don't move
 *
 ************************************************************/
-void reprint_whole_line(prompt, curr, anchor, top_visual, bottom_visual, p_y, flags, mode, pc)
-char *prompt;
-struct buffer_lines *curr;
-struct buffer_lines *anchor;
-int *top_visual;
-int *bottom_visual;
-int p_y;
-int flags;
-int mode;
-char *pc;
+void
+reprint_whole_line(prompt, curr, anchor, top_visual, bottom_visual, p_y, flags, mode, pc)
+    char *prompt;
+    struct buffer_lines *curr;
+    struct buffer_lines *anchor;
+    int *top_visual;
+    int *bottom_visual;
+    int p_y;
+    int flags;
+    int mode;
+    char *pc;
 {
-  char *p;
+    char *p;
 
-  if(mode == 0)
-  {
-    *top_visual += (p_y - *bottom_visual);
-    *bottom_visual = p_y;
-  }
-  if(mode == 1)
-  {
-    *bottom_visual -= (*top_visual - p_y);
-    *top_visual = p_y;
-  }
-  printf("7\r");
-  colorize(prompt);
-  p = (char *)malloc(strlen(curr->data+1));
-  strcpy (p, curr->data);
-  trim_line(p);
-  if(strlen(p) > 0)
-  {
-    reprint_colours(anchor, curr, get_realpos(curr, 0), flags, pc);
-    colorize(p);
-    printf("8");
-  }
-  else
-    printf("8");
-  free (p);
+    if (mode == 0) {
+	*top_visual += (p_y - *bottom_visual);
+	*bottom_visual = p_y;
+    }
+    if (mode == 1) {
+	*bottom_visual -= (*top_visual - p_y);
+	*top_visual = p_y;
+    }
+    printf("7\r");
+    colorize(prompt);
+    p = (char *)malloc(strlen(curr->data + 1));
+    strcpy(p, curr->data);
+    trim_line(p);
+    if (strlen(p) > 0) {
+	reprint_colours(anchor, curr, get_realpos(curr, 0), flags, pc);
+	colorize(p);
+	printf("8");
+    } else
+	printf("8");
+    free(p);
 }
 
 /***********************************************************
@@ -332,24 +330,25 @@ char *pc;
 * without colour codes
 *
 ************************************************************/
-int get_len (curr)
-struct buffer_lines *curr;
+int
+get_len(curr)
+    struct buffer_lines *curr;
 {
-  char *p;
-  int i, j=-1;
+    char *p;
+    int i, j = -1;
 
-  p = (char *)malloc(strlen(curr->data));
-  strcpy(p, curr->data);
-  trim_line (p);
+    p = (char *)malloc(strlen(curr->data));
+    strcpy(p, curr->data);
+    trim_line(p);
 
-  for (i=0; i<=strlen(p); i++)
-   if (p[i] != 1)
-     j++;
-   else
-     i++;
+    for (i = 0; i <= strlen(p); i++)
+	if (p[i] != 1)
+	    j++;
+	else
+	    i++;
 
-  free(p);
-  return (j);
+    free(p);
+    return (j);
 }
 
 /**************************************************************************
@@ -368,548 +367,462 @@ struct buffer_lines *curr;
 
 int
 YAWC_editor(result, lines, length, flags, prompt)
-char *result;
-int lines;
-int length;
-int flags;
-char *prompt;
+    char *result;
+    int lines;
+    int length;
+    int flags;
+    char *prompt;
 {
-struct buffer_lines	*anchor, *curr, *old;
-char    *p=0, *q=0, *t=NULL, *wrap=0;
-int     p_x = 0, p_y = 0, a, lines_used = 1, col_dirty = 1,
-	top_visual=0, bottom_visual, insert_mode=1, i;
-unsigned char   c = 255, oldc = 0;
-char *pc=NULL, *pd=NULL;  /* prompt colour and prompt data */
-char *tmp2;	/* for colourizing */
+    struct buffer_lines *anchor, *curr, *old;
+    char *p = 0, *q = 0, *t = NULL, *wrap = 0;
+    int p_x = 0, p_y = 0, a, lines_used = 1, col_dirty = 1, top_visual = 0, bottom_visual,
+        insert_mode = 1, i;
+    unsigned char c = 255, oldc = 0;
+    char *pc = NULL, *pd = NULL;/* prompt colour and prompt data */
+    char *tmp2;			/* for colourizing */
 
-  bottom_visual = rows-2;
+    bottom_visual = rows - 2;
 
-  if(strlen(prompt) > 0)	/* separate prompt colour and data */
-  {
-    p = pc = (char *)malloc (strlen(prompt));
-    pd = (char *)malloc (strlen(prompt));
+    if (strlen(prompt) > 0) {	/* separate prompt colour and data */
+	p = pc = (char *)malloc(strlen(prompt));
+	pd = (char *)malloc(strlen(prompt));
 
-    for(i=0; i<strlen(prompt); i++)
-     if (prompt[i] == 1)
-      {
-	*p++ = 1; *p++ = prompt[++i];
-      }
-    *p = 0;
+	for (i = 0; i < strlen(prompt); i++)
+	    if (prompt[i] == 1) {
+		*p++ = 1;
+		*p++ = prompt[++i];
+	    }
+	*p = 0;
 
-    p = pd;
-    for(i=0; i<strlen(prompt); i++)
-      if (prompt[i] == 1)
-	i++;
-      else
-	*p++ = prompt[i];
-    *p = 0;
-  }
-  else
-  {
-    pc = (char *)malloc (1);
-    pd = (char *)malloc (1);
-    
-    *pc = 0;
-    *pd = 0;
-  }
- 
-  anchor = curr = alloc_line(length);	/* initial line */
-  curr->prev = NULL;
-  
-  /*
-   * Have we been sent something to edit?
-   * If so, we will  print out the lines
-   * from the start, of course. The cursor will
-   * be at the first character of the last line.
-   */
+	p = pd;
+	for (i = 0; i < strlen(prompt); i++)
+	    if (prompt[i] == 1)
+		i++;
+	    else
+		*p++ = prompt[i];
+	*p = 0;
+    } else {
+	pc = (char *)malloc(1);
+	pd = (char *)malloc(1);
 
-  if(*result && flags & E_EDIT)
-  {
-    lines_used = 1;
-    p_x = 0;
-
-    for(a=0; a<strlen(result); a++)
-    {
-      if(result[a] == '\n' || result[a] == 0) /* end of line? */
-      {
-	if ((result[a-1] == '\n') && (result[a] == 0))
-	  break; /* work already done */
-	if (curr->prev == NULL) /* first line? */
-	  colorize(prompt);
-	else
-	  printf(pd);
-	print_line(curr->data, 0);
-	if ((result[a] != 0) && (result[a+1] != 0))
-	{
-	  curr = line_forw (curr,length);
-	  putchar('\n');
-	  lines_used++;
-	  p_y++;
-	  p_x = 0;
-	}
-	else /* last line */
-	{
-	  putchar('\r');
-	  for(i=0; i<strlen(pd); i++)
-	    printf("[C");	/* move cursor behind prompt */
-	  p_x = set_realpos(curr, 0);
-	}
-      }
-      else /* no end of line */
-      {
-        if(strlen(curr->data) > (curr->len - 3))
-          expand_line(curr);
-	curr->data[p_x++] = result[a];
-      }
+	*pc = 0;
+	*pd = 0;
     }
 
-  }	/* End E_EDIT */
-  else
-    colorize(prompt);
+    anchor = curr = alloc_line(length);	/* initial line */
+    curr->prev = NULL;
 
-  for(;;)
-    {
+    /* Have we been sent something to edit? If so, we will  print out the
+     * lines from the start, of course. The cursor will be at the first
+     * character of the last line. */
 
-      oldc = c;
-      c = inkey();
+    if (*result && flags & E_EDIT) {
+	lines_used = 1;
+	p_x = 0;
 
-     if(c == '\n')
-       c = CR;
+	for (a = 0; a < strlen(result); a++) {
+	    if (result[a] == '\n' || result[a] == 0) {	/* end of line? */
+		if ((result[a - 1] == '\n') && (result[a] == 0))
+		    break;	/* work already done */
+		if (curr->prev == NULL)	/* first line? */
+		    colorize(prompt);
+		else
+		    printf(pd);
+		print_line(curr->data, 0);
+		if ((result[a] != 0) && (result[a + 1] != 0)) {
+		    curr = line_forw(curr, length);
+		    putchar('\n');
+		    lines_used++;
+		    p_y++;
+		    p_x = 0;
+		} else {	/* last line */
+		    putchar('\r');
+		    for (i = 0; i < strlen(pd); i++)
+			printf("[C");	/* move cursor behind prompt */
+		    p_x = set_realpos(curr, 0);
+		}
+	    } else {		/* no end of line */
+		if (strlen(curr->data) > (curr->len - 3))
+		    expand_line(curr);
+		curr->data[p_x++] = result[a];
+	    }
+	}
 
-      if(c == 27)                               /* ESC                  */
-        {
-          c = inkey();
-          if(c == '[')                          /* [                    */
-            {
-              c = inkey();
-              switch(c)
-                {
-                  case 'A':                     /* up                   */
-                    if(p_y > 0)
-                      {
-			a = get_realpos(curr, p_x);
-                        p_y--;
-			curr = line_back(curr);
-			p_x = set_realpos(curr, a);
-                        printf("M"); /* go up and scroll if necessary */
+    }
+    /* End E_EDIT */
+    else
+	colorize(prompt);
 
-			if (p_y<top_visual) /* scrolled above top line? */
-			  reprint_whole_line(prompt, curr, anchor, 
-			  &top_visual, &bottom_visual, p_y, flags, 1, pc);
+    for (;;) {
 
-	      		reprint_colours(anchor, curr, p_x, flags, pc);
-                      }
-                    else
-                      putchar('\7');
-                    break;
+	oldc = c;
+	c = inkey();
 
-                  case 'B':                     /* down                 */
-                    if(p_y < lines_used-1)
-                      {
-			a = get_realpos(curr, p_x);
-                        p_y++;
-			curr = line_forw(curr,length);
-			p_x = set_realpos(curr, a);
-                        printf("D\x0a"); /* go down, scroll if necessary */
+	if (c == '\n')
+	    c = CR;
 
-			if (p_y >= col_dirty) /* re-print needed? */
-			{
-			  printf("7\r");
-			  colorize(prompt);
-			  reprint_colours(anchor, curr, get_realpos(curr, 0),
-			                 flags, pc);
-			  colorize(curr->data);
-			  printf("8");
-			  col_dirty = p_y+1;
-			}
+	if (c == 27) {		/* ESC                  */
+	    c = inkey();
+	    if (c == '[') {	/* [                    */
+		c = inkey();
+		switch (c) {
+				case 'A':	/* up                   */
+				    if (p_y > 0) {
+					a = get_realpos(curr, p_x);
+					p_y--;
+					curr = line_back(curr);
+					p_x = set_realpos(curr, a);
+					printf("M");	/* go up and scroll if
+							 * necessary */
 
-			if (p_y>bottom_visual) /* scrolled below the bottom? */
-			  reprint_whole_line(prompt, curr, anchor, 
-			  &top_visual, &bottom_visual, p_y, flags, 0, pc);
+					if (p_y < top_visual)	/* scrolled above top
+								 * line? */
+					    reprint_whole_line(prompt, curr, anchor,
+							       &top_visual, &bottom_visual, p_y, flags, 1, pc);
 
-	      		reprint_colours(anchor, curr, p_x, flags, pc);
+					reprint_colours(anchor, curr, p_x, flags, pc);
+				    } else
+					putchar('\7');
+				    break;
 
-                        if(lines_used == p_y && lines_used < lines)
-                          lines_used++;
-                      }
-                    else
-                      putchar('\7');
-                    
-                    break;
+				case 'B':	/* down                 */
+				    if (p_y < lines_used - 1) {
+					a = get_realpos(curr, p_x);
+					p_y++;
+					curr = line_forw(curr, length);
+					p_x = set_realpos(curr, a);
+					printf("D\x0a");	/* go down, scroll if
+								 * necessary */
 
-                  case 'C':                     /* right                */
-                    if(get_realpos(curr, p_x) < length-1)
-                      {
-                        p_x++;
-                        printf("[C");
-			while (curr->data[p_x] == 1)
-			{
-			  tmp2 = (char *) malloc(3);
-			  sprintf(tmp2, "\1%c", curr->data[++p_x]);
-			  colorize(tmp2);
-			  free(tmp2);
-			  p_x++;
-			  printf("%c\b", curr->data[p_x]);
-			}
-                      }
-                    else
-		    {
-		      if(p_y < lines_used-1)
-		      {
-			curr = line_forw(curr,length);
-			p_y++;
-			p_x=set_realpos(curr, 0);
-			putchar('\n');
-			colorize(prompt);
-			if (p_y >= col_dirty)
-			{
-			  reprint_colours(anchor, curr, get_realpos(curr, 0), 
-					  flags, pc);
-			  print_line(curr->data, 2);
-			  col_dirty = p_y+1;
-			}
-			if (p_y>bottom_visual)
-			  reprint_whole_line(prompt, curr, anchor, &top_visual,
-					    &bottom_visual, p_y, flags, 0, pc);
-			reprint_colours(anchor, curr, p_x, flags, pc);
-		      }
-		      else
-                        putchar('\7');
-		    }
-                    break;
+					if (p_y >= col_dirty) {	/* re-print needed? */
+					    printf("7\r");
+					    colorize(prompt);
+					    reprint_colours(anchor, curr, get_realpos(curr, 0),
+							    flags, pc);
+					    colorize(curr->data);
+					    printf("8");
+					    col_dirty = p_y + 1;
+					}
+					if (p_y > bottom_visual)	/* scrolled below the
+									 * bottom? */
+					    reprint_whole_line(prompt, curr, anchor,
+							       &top_visual, &bottom_visual, p_y, flags, 0, pc);
 
-                  case 'D':                     /* left                 */
-                    if(get_realpos(curr, p_x) > 0)
-                      {
-                        p_x--;
-                        printf("[D");
-			while (curr->data[p_x-1] == 1)
-			{
-			  p_x-=2;
-	      		  reprint_colours(anchor, curr, p_x, flags, pc);
-			}
-                      }
-                    else
-		    {
-		      if(p_y > 0)
-		      {
-			curr = line_back(curr);
-			p_y--;
-			p_x=set_realpos(curr, get_len(curr));
-			tmp2 = (char *) malloc(strlen(prompt) + 20);
-			sprintf(tmp2,"\rM%s[%dC", prompt, get_len(curr));
-			colorize(tmp2);
-			free(tmp2);
-			reprint_colours(anchor, curr, p_x, flags, pc);
-			if (p_y >= col_dirty)
-			{
-			  reprint_colours(anchor, curr, get_realpos(curr, 0),
-					  flags, pc);
-			  print_line(curr->data, 0);
-			}
-			if (p_y<top_visual)
-			  reprint_whole_line(prompt, curr, anchor, &top_visual,
-					    &bottom_visual, p_y, flags, 0, pc);
-		      }
-		      else
-                        putchar('\7');
-		    }
-                    break;
+					reprint_colours(anchor, curr, p_x, flags, pc);
 
-		  case '2':
-		    c = inkey();
-		    if(c == '~')
-		      insert_mode = 1 - insert_mode;
-		    else
-                      putchar('\7');
-		
-		    break;
+					if (lines_used == p_y && lines_used < lines)
+					    lines_used++;
+				    } else
+					putchar('\7');
 
-                  default:
-                    putchar('\7');
-                    break;
-                }
-            }
-          else
-            putchar('\7');
+				    break;
 
-          continue;
-        }
+				case 'C':	/* right                */
+				    if (get_realpos(curr, p_x) < length - 1) {
+					p_x++;
+					printf("[C");
+					while (curr->data[p_x] == 1) {
+					    tmp2 = (char *)malloc(3);
+					    sprintf(tmp2, "\1%c", curr->data[++p_x]);
+					    colorize(tmp2);
+					    free(tmp2);
+					    p_x++;
+					    printf("%c\b", curr->data[p_x]);
+					}
+				    } else {
+					if (p_y < lines_used - 1) {
+					    curr = line_forw(curr, length);
+					    p_y++;
+					    p_x = set_realpos(curr, 0);
+					    putchar('\n');
+					    colorize(prompt);
+					    if (p_y >= col_dirty) {
+						reprint_colours(anchor, curr, get_realpos(curr, 0),
+								flags, pc);
+						print_line(curr->data, 2);
+						col_dirty = p_y + 1;
+					    }
+					    if (p_y > bottom_visual)
+						reprint_whole_line(prompt, curr, anchor, &top_visual,
+								   &bottom_visual, p_y, flags, 0, pc);
+					    reprint_colours(anchor, curr, p_x, flags, pc);
+					} else
+					    putchar('\7');
+				    }
+				    break;
 
+				case 'D':	/* left                 */
+				    if (get_realpos(curr, p_x) > 0) {
+					p_x--;
+					printf("[D");
+					while (curr->data[p_x - 1] == 1) {
+					    p_x -= 2;
+					    reprint_colours(anchor, curr, p_x, flags, pc);
+					}
+				    } else {
+					if (p_y > 0) {
+					    curr = line_back(curr);
+					    p_y--;
+					    p_x = set_realpos(curr, get_len(curr));
+					    tmp2 = (char *)malloc(strlen(prompt) + 20);
+					    sprintf(tmp2, "\rM%s[%dC", prompt, get_len(curr));
+					    colorize(tmp2);
+					    free(tmp2);
+					    reprint_colours(anchor, curr, p_x, flags, pc);
+					    if (p_y >= col_dirty) {
+						reprint_colours(anchor, curr, get_realpos(curr, 0),
+								flags, pc);
+						print_line(curr->data, 0);
+					    }
+					    if (p_y < top_visual)
+						reprint_whole_line(prompt, curr, anchor, &top_visual,
+								   &bottom_visual, p_y, flags, 0, pc);
+					} else
+					    putchar('\7');
+				    }
+				    break;
 
-      if(c == CTRL_D)   /* temporary "finished"-button. */
-        break;
+				case '2':
+				    c = inkey();
+				    if (c == '~')
+					insert_mode = 1 - insert_mode;
+				    else
+					putchar('\7');
 
-      if(c == CR)       /* ends this line and moves to the next */
-        {
+				    break;
 
-          /*
-           * two enters in a row and allowed -> finished.
-           */
+				default:
+				    putchar('\7');
+				    break;
+		}
+	    } else
+		putchar('\7');
 
-          if(flags & E_2ENTEREND && (c == oldc || oldc == 255))
-            break;
-
-          if(p_y < lines-1)     /* is there a line to go to?    */
-            {
-	      curr = line_forw(curr,length);
-              p_y++;
-              p_x=set_realpos(curr, 0);
-
-              putchar('\n');
-              colorize(prompt);
-	      if (p_y >= col_dirty)
-	      {
-		reprint_colours(anchor, curr, get_realpos(curr, 0), flags, pc);
-		printf("7");
-		colorize(curr->data);
-		printf("8");
-		col_dirty = p_y+1;
-	      }
-
-	      if (p_y>bottom_visual)
-		reprint_whole_line(prompt, curr, anchor, &top_visual, 
-				   &bottom_visual, p_y, flags, 0, pc);
-
-	      reprint_colours(anchor, curr, p_x, flags, pc);
-
-              if(p_y == lines_used && lines_used < lines)
-                lines_used++;
-            }
-          else
+	    continue;
+	}
+	if (c == CTRL_D)	/* temporary "finished"-button. */
 	    break;
 
-          continue;
+	if (c == CR) {		/* ends this line and moves to the next */
 
-        }
+	    /* two enters in a row and allowed -> finished. */
 
-      if(c == '\b' || c == CTRL_X || c == CTRL_W)	/* deleting stuff */
-        {
-          if(p_x > 0)
-            {
-              do
-                {
-		  p = (char *) malloc (strlen(curr->data));
-		  strcpy (p, (char *)&curr->data[p_x--]);
+	    if (flags & E_2ENTEREND && (c == oldc || oldc == 255))
+		break;
 
-		  if (curr->data[p_x-1] != 1)
-		  {
-                    putchar('\b');
-		    print_line(p, 1);
-		  }
-		  else
-		  {
-	            reprint_colours(anchor, curr, --p_x, flags, pc);
-		    print_line(p, 2);
-		  }  
-		  memcpy (&curr->data[p_x], p, strlen(p)+1);
-		  strcat (curr->data, " ");
-		  free (p);
-                } while(p_x > 0 && (c == CTRL_X ||
-                         (c == CTRL_W && curr->data[p_x - 1] != ' ')));
-            }
-          else if(p_y > 0)      /* p_x == 0 */
-            {
-              putchar('\7');    /* will work (anti-wrap) eventually */
-            }
-          else                  /* p_x == p_y == 0 */
-            putchar('\7');
+	    if (p_y < lines - 1) {	/* is there a line to go to?    */
+		curr = line_forw(curr, length);
+		p_y++;
+		p_x = set_realpos(curr, 0);
 
-          continue;
-        }
+		putchar('\n');
+		colorize(prompt);
+		if (p_y >= col_dirty) {
+		    reprint_colours(anchor, curr, get_realpos(curr, 0), flags, pc);
+		    printf("7");
+		    colorize(curr->data);
+		    printf("8");
+		    col_dirty = p_y + 1;
+		}
+		if (p_y > bottom_visual)
+		    reprint_whole_line(prompt, curr, anchor, &top_visual,
+				       &bottom_visual, p_y, flags, 0, pc);
 
-      if(c == 1 && flags&E_COLORS)
-	{
-	  colorize("\1a\1u\1B\1c\1eA[D"); /* colour prompt */
-	  fflush(stdout);
-	  c = inkey();
-	  reprint_colours(anchor, curr, p_x, flags, pc);
-	  p = (char *)malloc(5);
-	  sprintf(p, "%c\b", curr->data[p_x]); 
-	  colorize(p);
-	  fflush(stdout);
+		reprint_colours(anchor, curr, p_x, flags, pc);
 
-	  if(c < 32 || c > 127)
-	  {
+		if (p_y == lines_used && lines_used < lines)
+		    lines_used++;
+	    } else
+		break;
+
+	    continue;
+
+	}
+	if (c == '\b' || c == CTRL_X || c == CTRL_W) {	/* deleting stuff */
+	    if (p_x > 0) {
+		do {
+		    p = (char *)malloc(strlen(curr->data));
+		    strcpy(p, (char *)&curr->data[p_x--]);
+
+		    if (curr->data[p_x - 1] != 1) {
+			putchar('\b');
+			print_line(p, 1);
+		    } else {
+			reprint_colours(anchor, curr, --p_x, flags, pc);
+			print_line(p, 2);
+		    }
+		    memcpy(&curr->data[p_x], p, strlen(p) + 1);
+		    strcat(curr->data, " ");
+		    free(p);
+		} while (p_x > 0 && (c == CTRL_X ||
+			      (c == CTRL_W && curr->data[p_x - 1] != ' ')));
+	    } else if (p_y > 0) {	/* p_x == 0 */
+		putchar('\7');	/* will work (anti-wrap) eventually */
+	    } else		/* p_x == p_y == 0 */
+		putchar('\7');
+
+	    continue;
+	}
+	if (c == 1 && flags & E_COLORS) {
+	    colorize("\1a\1u\1B\1c\1eA[D");	/* colour prompt */
+	    fflush(stdout);
+	    c = inkey();
+	    reprint_colours(anchor, curr, p_x, flags, pc);
+	    p = (char *)malloc(5);
+	    sprintf(p, "%c\b", curr->data[p_x]);
+	    colorize(p);
+	    fflush(stdout);
+
+	    if (c < 32 || c > 127) {
+		putchar('\7');
+		continue;
+	    }
+	    p = (char *)malloc(strlen(curr->data));
+	    strcpy(p, (char *)&curr->data[p_x]);
+	    tmp2 = (char *)malloc(3);
+	    sprintf(tmp2, "\1%c", c);
+	    colorize(tmp2);
+	    free(tmp2);
+	    print_line(p, 2);
+	    if (strlen(curr->data) > (curr->len - 3))
+		expand_line(curr);
+	    curr->data[p_x++] = 1;
+	    curr->data[p_x++] = c;
+	    memcpy(&curr->data[p_x], p, strlen(p) + 1);
+	    col_dirty = p_y + 1;
+	    free(p);
+	    continue;
+	}
+	if (c < 32 || c > 127) {
 	    putchar('\7');
 	    continue;
-	  }
-	  p = (char *) malloc (strlen(curr->data));
-	  strcpy (p, (char *)&curr->data[p_x]);
-	  tmp2 = (char *) malloc(3);
-	  sprintf(tmp2,"\1%c", c);
-	  colorize(tmp2);
-	  free(tmp2);
-	  print_line(p, 2);
-	  if(strlen(curr->data) > (curr->len - 3))
-	    expand_line(curr);
-	  curr->data[p_x++] = 1;
-	  curr->data[p_x++] = c;
-	  memcpy (&curr->data[p_x], p, strlen(p)+1);
-	  col_dirty= p_y+1;
-	  free (p);
-	  continue;
+	}
+	curr->data[p_x++] = c;
+	putchar(c);
+
+	while (curr->data[p_x] == 1) {
+	    tmp2 = (char *)malloc(3);
+	    sprintf(tmp2, "\1%c", curr->data[++p_x]);
+	    colorize(tmp2);
+	    free(tmp2);
+	    p_x++;
 	}
 
-        if(c < 32 || c > 127)
-        {
-          putchar('\7');
-          continue;
-        }
+	if (get_len(curr) == length) {	/* will be full at next char    */
+	    if (p_y < lines - 1) {	/* can go to the next line      */
+		old = curr;
+		wrap = (char *)malloc(strlen(curr->data));
+		if (wrap == NULL)
+		    printf("\nmalloc error - out of system memory?\n");
+		wrap[0] = 0;
+		p_x = get_len(curr);
+		if ((c != ' ') && (p_y + 1 == lines_used)) {
+		    for (q = &curr->data[p_x]; *q != ' ' && q > curr->data; q--);
+		    if (q > curr->data) {
+			strcpy(wrap, ++q);
+			for (a = 0; a < strlen(wrap); a++) {
+			    if (curr->data[(--p_x) - 1] != 1) {
+				printf("\b \b");
+				curr->data[p_x] = ' ';
+			    } else {
+				curr->data[p_x--] = ' ';
+				curr->data[p_x] = ' ';
+				a++;
+			    }
+			}	/* for wrap */
+		    }		/* if q wrapping */
+		}		/* wrapping action */
+		curr = line_forw(curr, length);
+		p_y++;
+		putchar('\n');
+		colorize(prompt);
 
-      curr->data[p_x++] = c;
-      putchar(c);
-
-      while (curr->data[p_x] == 1)
-      {
-	tmp2 = (char *) malloc(3);
-	sprintf(tmp2,"\1%c", curr->data[++p_x]);
-	colorize(tmp2);
-	free(tmp2);
-	p_x++;
-      }
-
-      if(get_len(curr) == length)   /* will be full at next char    */
-      {
-        if(p_y < lines-1)     /* can go to the next line      */
-        {
-          old = curr;
-	  wrap = (char *)malloc (strlen(curr->data));
-	  if (wrap == NULL)
-	    printf("\nmalloc error - out of system memory?\n");
-	  wrap[0] = 0;
-	  p_x = get_len(curr);
-	  if ((c != ' ') && (p_y+1 == lines_used))
-	  {
-	    for (q = &curr->data[p_x]; *q != ' ' && q > curr->data; q--)
-	      ;
-	    if (q > curr->data)
-	    {
-	      strcpy (wrap, ++q);
-	      for (a=0; a<strlen(wrap); a++)
-	      {
-	        if (curr->data[(--p_x) - 1] != 1)
-		{
-		  printf("\b \b");
-		  curr->data[p_x] = ' ';
+		if (p_y >= col_dirty) {
+		    reprint_colours(anchor, curr, get_realpos(curr, 0), flags, pc);
+		    printf("7");
+		    colorize(curr->data);
+		    printf("8");
+		    col_dirty = p_y + 1;
 		}
-		else
-		{
-		  curr->data[p_x--] = ' ';
-		  curr->data[p_x] = ' ';
-		  a++;
-		} 
-	      } /* for wrap */
-            } /* if q wrapping */
-          } /* wrapping action */
-	  curr = line_forw(curr,length);
-	  p_y++;
-	  putchar('\n');
-	  colorize(prompt);
+		if (p_y > bottom_visual)
+		    reprint_whole_line(prompt, curr, anchor, &top_visual,
+				       &bottom_visual, p_y, flags, 0, pc);
 
-	  if (p_y >= col_dirty)
-	  {
-	    reprint_colours(anchor, curr, get_realpos(curr, 0), flags, pc);
-	    printf("7");
-	    colorize(curr->data);
-	    printf("8");
-	    col_dirty = p_y+1;
-	  }
+		reprint_colours(anchor, curr, p_x, flags, pc);
 
-	  if (p_y>bottom_visual)
-	    reprint_whole_line(prompt, curr, anchor, &top_visual, 
-	                       &bottom_visual, p_y, flags, 0, pc);
+		p_x = strlen(wrap);
+		if (wrap[0] != 0) {
+		    while (strlen(wrap) > (curr->len - 3))
+			expand_line(curr);
+		    memcpy(curr->data, wrap, strlen(wrap));
+		    colorize(wrap);
+		}
+		free(wrap);
+		if (p_y == lines_used && lines_used < lines) {
+		    lines_used++;
+		}
+	    } else {		/* the end of the last line     */
+		p_x--;
+		printf("\b\007");
+	    }
+	}			/* wrapping main loop */
+    }				/* main loop */
 
-	  reprint_colours(anchor, curr, p_x, flags, pc);
+    /* Here, go down (lines_used - p_y) steps. Reason: If we were on the
+     * topmost line and had several used lines below, we need to get below
+     * those lines now that we're finished. We'll also stop the blinking
+     * line-cursor. */
 
-	  p_x=strlen(wrap);
-	  if (wrap[0] != 0)
-	  {
-	    while(strlen(wrap) > (curr->len - 3))
-	      expand_line(curr);
-	    memcpy (curr->data, wrap, strlen(wrap));
-	    colorize(wrap);
-	  }
-	  free(wrap);
-	  if(p_y == lines_used && lines_used < lines)
-	  {
-	    lines_used++;
-	  }
-        }
-        else                  /* the end of the last line     */
-        {
-          p_x--;
-          printf("\b\007");
-        }
-      } /* wrapping main loop */
-    } /* main loop */
+    for (a = p_y; a < lines_used; a++)
+	putchar('\n');
 
-  /*
-   * Here, go down (lines_used - p_y) steps. Reason: If we
-   * were on the topmost line and had several used lines
-   * below, we need to get below those lines now that we're
-   * finished. We'll also stop the blinking line-cursor.
-   */
+    /* now remove the unnecessary <space>'s from the end of all of the lines,
+     * starting from the last tmp_array. We do that so that we can
+     * anti-include, whatever that's called in proper english ;), all of the
+     * empty lines at the end.  -KHaglund
+     * 
+     * um - 'delete' maybe? ;)   -Flint */
 
-  for(a=p_y; a<lines_used; a++)
-    putchar('\n');
+    curr = anchor;
+    while (curr->next != NULL)
+	curr = curr->next;
 
-  /*
-   * now remove the unnecessary <space>'s from the end of
-   * all of the lines, starting from the last tmp_array. We
-   * do that so that we can anti-include, whatever that's
-   * called in proper english ;), all of the empty lines at
-   * the end.  -KHaglund
-   *
-   *   um - 'delete' maybe? ;)   -Flint
-   */
-
-  curr = anchor;
-  while (curr->next != NULL)
-    curr = curr->next;
-
-  for(a=lines_used-1; a>=0; a--)
-    {
-      t = strrkhr(curr->data, ' ');
-      *t = '\0';
-      if(!*curr->data && a == lines_used-1)
-        lines_used--;
-      curr = curr->prev;
+    for (a = lines_used - 1; a >= 0; a--) {
+	t = strrkhr(curr->data, ' ');
+	*t = '\0';
+	if (!*curr->data && a == lines_used - 1)
+	    lines_used--;
+	curr = curr->prev;
     }
 
-  /*
-   * And last, but not least, lets put everything in
-   * (char *)result which this function was called with.
-   */
+    /* And last, but not least, lets put everything in (char *)result which
+     * this function was called with. */
 
-  curr = anchor;
+    curr = anchor;
 
-  for(p=result, a=0; a<lines_used; a++)
-    {
-      if (flags & E_INCLUDE_PROMPT) /* include prompt into result? */
-        for(i=0; i<strlen(pd); i++)
-          *p++ = pd[i];
+    for (p = result, a = 0; a < lines_used; a++) {
+	if (flags & E_INCLUDE_PROMPT)	/* include prompt into result? */
+	    for (i = 0; i < strlen(pd); i++)
+		*p++ = pd[i];
 
-      t = (char *) memccpy(p, curr->data, '\0', curr->len+1);
-      curr = curr->next;
-      if(t == NULL)
-        colorize("\1f\1r\nEdit problem. uh-oh...\n");
-      else
-        {
-          p = t;
-          *(p-1) = '\n';
-        }
+	t = (char *)memccpy(p, curr->data, '\0', curr->len + 1);
+	curr = curr->next;
+	if (t == NULL)
+	    colorize("\1f\1r\nEdit problem. uh-oh...\n");
+	else {
+	    p = t;
+	    *(p - 1) = '\n';
+	}
     }
 
-  *p = '\0';
+    *p = '\0';
 
-  curr = anchor;
-  while (curr != NULL)
-  {
-    old = curr;
-    curr = curr->next;
-    free(old);
-  }
+    curr = anchor;
+    while (curr != NULL) {
+	old = curr;
+	curr = curr->next;
+	free(old);
+    }
 
-  return(0);
+    return (0);
 }

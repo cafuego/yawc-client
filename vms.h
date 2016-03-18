@@ -1,7 +1,5 @@
-/*
- * This is where all the system-specific #include files go, and all the #ifdefs
- * for portability to different systems belong here and in system.c. 
- */
+/* This is where all the system-specific #include files go, and all the
+ * #ifdefs for portability to different systems belong here and in system.c. */
 
 #define SPAWN$WAIT   0
 #define SPAWN$NOWAIT 1
@@ -49,38 +47,35 @@
 
 
 /* VMS specific variables */
-unsigned short ctlchan;	/* Network IO channel  */
+unsigned short ctlchan;		/* Network IO channel  */
 unsigned short key_chan;	/* Terminal IO channel */
-unsigned long ef;	/* Event flag set when input arrives       */
-unsigned long ef_child;	/* Event flag set when subprocess finishes */
-NetSB_Fields iosb_send,
-        iosb_rcv,
-        iosb_getc;		/* IO status blocks */
-FILE *netofp;		/* Dummy declaration for compatibility */
-int in_ch;		/* Last character read from terminal */
-int car_in;		/* True if a character is waiting */
-int char_wait;		/* Fake character pushed in input */
-int char_wait_flag;	/* True if fake input is present. */
-int net_cara;		/* Input character from network   */
-int net_in;		/* True if network input is available */
+unsigned long ef;		/* Event flag set when input arrives       */
+unsigned long ef_child;		/* Event flag set when subprocess finishes */
+NetSB_Fields iosb_send, iosb_rcv, iosb_getc;	/* IO status blocks */
+FILE *netofp;			/* Dummy declaration for compatibility */
+int in_ch;			/* Last character read from terminal */
+int car_in;			/* True if a character is waiting */
+int char_wait;			/* Fake character pushed in input */
+int char_wait_flag;		/* True if fake input is present. */
+int net_cara;			/* Input character from network   */
+int net_in;			/* True if network input is available */
 
 unsigned char outbuf[TERM$BUFSIZ];	/* Terminal output buffer. */
 unsigned char outbuf_net[NET$BUFSIZ];	/* Terminal output buffer. */
 unsigned char *current_out;	/* Pointer into output buffer */
 unsigned char *current_out_net;	/* Pointer into output buffer */
-int tbusy;		/* True if an output QIO is pending */
-int netbusy;		/* True if an output QIO is pending */
+int tbusy;			/* True if an output QIO is pending */
+int netbusy;			/* True if an output QIO is pending */
 int net_request;
-int request;		/* True if we have received a flush request
+int request;			/* True if we have received a flush request
 				 * while a QIO was pending. */
 
 /* Structure for searching logical names. */
-#define LNM$_STRING 2                   /* Translation string  */
-struct  LNM$ITEMLIST
-		{
-		unsigned short 	lnm$item_buflen;
-		unsigned short 	lnm$item_code;
-		char 		*lnm$item_buffer;
-		char 		*lnm$item_retlen;
-		int  		lnm$item_flag;
-		} ;
+#define LNM$_STRING 2		/* Translation string  */
+struct LNM$ITEMLIST {
+    unsigned short lnm$item_buflen;
+    unsigned short lnm$item_code;
+    char *lnm$item_buffer;
+    char *lnm$item_retlen;
+    int lnm$item_flag;
+};

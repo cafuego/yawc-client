@@ -1,7 +1,6 @@
-/*
- * This is where all the system-specific #include files go, and all the #ifdefs
- * for portability to different Unix systems belong here and in unix.c. 
- */
+/* This is where all the system-specific #include files go, and all the
+ * #ifdefs for portability to different Unix systems belong here and in
+ * unix.c. */
 #include <netinet/in.h>
 #include <netdb.h>
 #include <pwd.h>
